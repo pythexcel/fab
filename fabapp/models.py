@@ -4,6 +4,7 @@ import datetime
 from django.contrib.auth.base_user import AbstractBaseUser
 from django.conf import settings
 from phone_field import PhoneField
+from phonenumber_field.modelfields import PhoneNumberField
 
 
 class User(AbstractBaseUser):
@@ -17,7 +18,7 @@ class User(AbstractBaseUser):
     status = models.BooleanField(default=True)
     name = models.CharField(name="name", max_length=100)
     bio = models.TextField()
-    phone = PhoneField(null=False, blank=False, unique=True)
+    phone = PhoneNumberField(null=False, blank=False, unique=True)
     profile_image = models.ImageField(upload_to='Images/',
                                       default='Images/None/No-img.jpg')
     is_active = models.BooleanField(default=True)
@@ -55,9 +56,10 @@ class Exhibitor(models.Model):
                              on_delete=models.CASCADE)
     size = models.CharField(max_length=350)
     stall_no = models.CharField(max_length=350)
-    color_theme = models.TextField()
+    color_theme = models.CharField(max_length=3000,null=True, blank=True)
     carpet = models.CharField(max_length=350)
-    extra = models.TextField(null=True, blank=True)
+    extra = models.CharField(max_length=3000,null=True, blank=True)
+    website_link = models.URLField(max_length=350)
     created_on = models.DateTimeField(auto_now_add=True)
 
 

@@ -95,7 +95,7 @@ class ExhibitorSerializer(serializers.ModelSerializer):
         model = Exhibitor
         fields = ('id', 'exhibition', 'size', 'stall_no', 'color_theme',
                   'carpet', 'extra', 'created_on', 'furnitures', 'brandings',
-                  'products', 'user')
+                  'products', 'user','website_link')
 
     def create(self, validated_data):
         furniture_data = validated_data.pop('furnitures')

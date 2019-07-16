@@ -24,6 +24,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'fabapp.apps.FabappConfig',
     'corsheaders',
+    'phonenumber_field',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
