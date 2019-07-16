@@ -2,12 +2,13 @@ from django.db import models
 from fabapp.managers import UserManager
 import datetime
 from django.contrib.auth.base_user import AbstractBaseUser
+from django.contrib.auth.models import PermissionsMixin
 from django.conf import settings
 from phone_field import PhoneField
 from phonenumber_field.modelfields import PhoneNumberField
 
 
-class User(AbstractBaseUser):
+class User(AbstractBaseUser,PermissionsMixin):
     email = models.EmailField(
         unique=True,
         error_messages={
