@@ -1,0 +1,7 @@
+env
+/fab/__pycache__
+/fabapp/__pycache__
+/fabapp/migrations
+.vscode
+.env
+media
