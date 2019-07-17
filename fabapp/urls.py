@@ -14,7 +14,10 @@ urlpatterns = [
     url('exhibitor_detail/<int:pk>', views.ExhibhitDetails.as_view()),
     url('exhibtorlist', views.ExhibitorList.as_view()),
     url('fabricatorlist', views.FabricatorList.as_view()),
-    url('banuser', views.BanUser.as_view())
+    url('banuser', views.BanUser.as_view()),
+    url('portfolio', views.FabricatorPortfolio.as_view()),
+    url('portfolio/<int:pk>', views.FabricatorPortfolio.as_view()),
+    url('exifab/<int:pk>/<int:pk_user>', views.ExhibitionFab.as_view())
     
 ]
 

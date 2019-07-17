@@ -83,3 +83,22 @@ class FurnitureExhibitorDetail(models.Model):
                                    related_name='furnitures',
                                    on_delete=models.CASCADE)
     furniture = models.TextField()
+
+class Portfolio(models.Model):
+    user = models.ForeignKey(User,
+                             related_name='fabricator_user',
+                             blank=True,
+                             null=True,
+                             on_delete=models.CASCADE)
+    image = models.ImageField(upload_to='Images/',
+                                      default='Images/None/No-img.jpg')
+
+class ExhibitFab(models.Model):
+    exhibition = models.ForeignKey(Exhibition,
+                                   blank=True,
+                                   null=True,
+                                   on_delete=models.CASCADE)
+    user = models.ForeignKey(User,
+                             blank=True,
+                             null=True,
+                             on_delete=models.CASCADE)

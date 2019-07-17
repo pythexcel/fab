@@ -1,4 +1,6 @@
-from fabapp.models import Exhibitor, FurnitureExhibitorDetail, BrandingExhibitorDetail, ProductExhibitorDetail, User, Exhibition
+from fabapp.models import (User, Exhibition, Exhibitor, Portfolio,
+                           ProductExhibitorDetail, FurnitureExhibitorDetail,
+                           BrandingExhibitorDetail,ExhibitFab)
 from rest_framework import serializers
 from drf_extra_fields.fields import Base64ImageField
 from django.contrib.auth.hashers import make_password
@@ -95,7 +97,7 @@ class ExhibitorSerializer(serializers.ModelSerializer):
         model = Exhibitor
         fields = ('id', 'exhibition', 'size', 'stall_no', 'color_theme',
                   'carpet', 'extra', 'created_on', 'furnitures', 'brandings',
-                  'products', 'user','website_link')
+                  'products', 'user', 'website_link')
 
     def create(self, validated_data):
         furniture_data = validated_data.pop('furnitures')
@@ -124,17 +126,13 @@ class ExhibitorSerializer(serializers.ModelSerializer):
         return instance
 
 
-# class FabricatorSerializer(serializers.ModelSerializer):
-#     user = UserSerialzier(many=False, read_only=True)
-#     portfolio = PortfolioDetail(many=True)
+class FabricatorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Portfolio
+        fields = ('id','image')
 
-#     class Meta:
-#         model = FabricatorDetail
-#         fields = ('id', 'user', 'portfolio')
 
-#     def create(self, validated_data):
-#         protfolio_detai = validated_data.pop('portfolio')
-#         exi = PortfolioFabricator.objects.create(**validated_data)
-#         for data in PortfolioDetail:
-#             FurnitureExhibitorDetail.objects.create(furnitures=exi, **data)
-#         return exi
+class ExhibitFabricators(serializers.ModelSerializer):
+    class Meta:
+        model = ExhibitFab     
+        fields = '__all__'
