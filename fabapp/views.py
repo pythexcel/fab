@@ -6,7 +6,7 @@ from rest_framework import status
 from django.contrib.auth import authenticate
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
-from fabapp.serializers import UserRegisterSerializer, UserDetailSerializer, ExhibitionSerializer, ExhibitorSerializer
+from fabapp.serializers import UserRegisterSerializer, UserDetailSerializer, ExhibitionSerializer, ExhibitorSerializer,ExhibitionDetail
 
 
 class Test(APIView):
@@ -80,7 +80,7 @@ class CreateExhibition(APIView):
     def get(self, request, format=None):
         exhibition = Exhibition.objects.all()
         if exhibition is not None:
-            serializer = ExhibitionSerializer(exhibition, many=True)
+            serializer = ExhibitionDetail(exhibition, many=True)
             return Response(serializer.data)
         else:
             return Response([], status=status.HTTP_400_BAD_REQUEST)
