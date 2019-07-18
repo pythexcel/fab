@@ -11,7 +11,7 @@ from fabapp.serializers import (UserRegisterSerializer, UserDetailSerializer,
                                 ExhibitionSerializer, ExhibitorSerializer,
                                 ExhibitionDetail, FabricatorSerializer,
                                 ExhibitFabricators)
-
+from fabapp.permissions import (IsExhibhitor)
 
 class Test(APIView):
     def get(self, requset):
@@ -164,7 +164,7 @@ class BanUser(APIView):
 
 
 class ExhibitorRequire(APIView):
-    permission_classes = (IsAuthenticated, )
+    permission_classes = (IsAuthenticated,IsExhibhitor, )
 
     def post(self, request, format=None, pk=None):
         exhibhition = Exhibition.objects.get(pk=pk)
