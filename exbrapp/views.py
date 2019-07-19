@@ -2,7 +2,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.authtoken.models import Token
 from rest_framework.parsers import MultiPartParser, FormParser, FileUploadParser
-from fabapp.models import User, Exhibition
+from fabapp.models import User, Exhibition, ExhibitFab
 from exbrapp.models import Exhibitor
 from rest_framework import status
 from django.contrib.auth import authenticate
@@ -10,10 +10,11 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from exbrapp.serializers import (ExhibitorSerializer)
 from exbrapp.permissions import IsExhibitor
+from fabapp.serializers import UserDetailSerializer, ExhibitFabricators
 
 
 class ExhibitorRequire(APIView):
-    permission_classes = (IsAuthenticated,IsExhibitor )
+    permission_classes = (IsAuthenticated, IsExhibitor)
 
     def post(self, request, format=None, pk=None):
         exhibhition = Exhibition.objects.get(pk=pk)
@@ -37,7 +38,7 @@ class ExhibitorRequire(APIView):
 
 
 class ExhibhitDetails(APIView):
-    permission_classes = (IsAuthenticated,IsExhibitor )
+    permission_classes = (IsAuthenticated, IsExhibitor)
 
     def get_object(self, pk):
         try:
@@ -62,3 +63,30 @@ class ExhibhitDetails(APIView):
         exi = self.get_object(pk)
         exi.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class Fabricatorslist(APIView):
+    permission_classes = (IsAuthenticated, IsExhibitor)
+
+    def get(self, request, format=None, pk=None):
+        exi = ExhibitFab.objects.filter(exhibition_id=pk)
+        serializer = ExhibitFabricators(exi, many=True)
+        user_list = []
+        for data in serializer.data:
+            user = User.objects.get(id=data['user'])
+            serial = UserDetailSerializer(user, many=False)
+            user_list.append(serial.data)
+
+        return Response(user_list)
+
+
+class Fabricator_dt(APIView):
+    permission_classes = (IsAuthenticated, IsExhibitor)
+
+    def get(self, request, format=None, pk=None, user_pk=None):
+        exi = ExhibitFab.objects.get(exhibition_id=pk, user_id=user_pk)
+        serializer = ExhibitFabricators(exi, many=False)
+        print(serializer.data)
+        user = User.objects.get(id=serializer.data['user'])
+        serial = UserDetailSerializer(user, many=False)
+        return Response(serial.data)

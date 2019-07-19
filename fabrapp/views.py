@@ -10,6 +10,7 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from fabrapp.serializers import FabricatorSerializer
 from fabrapp.permissions import IsFabricator
+from fabapp.serializers import UserDetailSerializer
 
 
 def modify_input_for_multiple_files(image):
@@ -49,3 +50,4 @@ class FabricatorPortfolio(APIView):
         exi = Portfolio.objects.get(user=self.request.user, pk=pk)
         exi.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+

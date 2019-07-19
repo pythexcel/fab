@@ -96,9 +96,26 @@ class CreateExhibition(APIView):
 
     def get(self, request, format=None):
         exhibition = Exhibition.objects.all()
-        if exhibition is not None:
-            serializer = ExhibitionDetail(exhibition, many=True)
-            return Response(serializer.data)
+        serializer = ExhibitionDetail(exhibition, many=True)
+        fabricator =  ExhibitFab.objects.all()
+        serial = ExhibitFabricators(fabricator,many=True)
+        exhibhitor = Exhibitor.objects.all()
+        ser = ExhibitorSerializer(exhibhitor,many=True)
+        exhibitions = []
+        for data in serializer.data:
+            fab_list = []
+            exb_list = []
+            for elem in serial.data:
+                if data['id'] == elem['exhibition']:
+                    fab_list.append(elem)
+            for detail in ser.data:
+                if data['id'] == detail['exhibition']:
+                    exb_list.append(detail)
+            data['fabricators'] = fab_list
+            data['exhibhitors'] = exb_list
+            exhibitions.append(data)       
+        if len(exhibitions) > 0:
+            return Response(exhibitions)
         else:
             return Response([], status=status.HTTP_400_BAD_REQUEST)
 
@@ -137,7 +154,7 @@ class FabricatorList(APIView):
         user = User.objects.filter(role='fabricator', is_active=True)
 
         if len(user) > 0:
-            serialzier = UserSerialzier(user, many=True)
+            serialzier = UserDetailSerializer(user, many=True)
             return Response(serialzier.data)
         else:
             return Response([], status=status.HTTP_400_BAD_REQUEST)
@@ -154,7 +171,7 @@ class ExhibitorList(APIView):
         user = User.objects.filter(role='exhibitor',
                                    is_active=True)  #filter(role="exhibitor")
         if len(user) > 0:
-            serialzier = UserSerialzier(user, many=True)
+            serialzier = UserDetailSerializer(user, many=True)
             return Response(serialzier.data)
         else:
             return Response([], status=status.HTTP_400_BAD_REQUEST)
@@ -172,7 +189,7 @@ class BanUser(APIView):
         if user is not None:
             user.is_active = False
             user.save()
-            return Response(user.username + " is banned")
+            return Response(user.email + " is banned")
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -186,3 +203,5 @@ class ExhibitionFab(APIView):
         exi.save()
         serializer = ExhibitFabricators(exi, many=False)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
