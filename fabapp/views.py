@@ -183,9 +183,8 @@ class ExhibitorList(APIView):
 class BanUser(APIView):
     permission_classes = (IsAdminUser, )
 
-    def get(self, request, format=None):
-        ban_id = request.data.get("ban_id")
-        user = User.objects.get(pk=ban_id)
+    def get(self, request, format=None,pk=None):
+        user = User.objects.get(id=pk)
         if user is not None:
             user.is_active = False
             user.save()

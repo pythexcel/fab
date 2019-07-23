@@ -9,3 +9,5 @@ media
 /exbrapp/migrations
 /fabrapp/__pycache__
 /fabrapp/migrations
+/review/migrations
+/review/__pycache__
