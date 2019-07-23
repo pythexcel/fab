@@ -25,6 +25,7 @@ INSTALLED_APPS = [
     'fabapp.apps.FabappConfig',
     'exbrapp.apps.ExbrappConfig',
     'fabrapp.apps.FabrappConfig',
+    'review.apps.ReviewConfig',
     'corsheaders',
     'phonenumber_field',
     'django.contrib.admin',
@@ -83,7 +84,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'fab',
         'USER': 'root',
-        'PASSWORD': '123', #java@123
+        'PASSWORD': 'java@123', #java@123
         'HOST': 'localhost',
         'PORT': '',
     }

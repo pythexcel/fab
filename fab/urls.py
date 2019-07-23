@@ -8,6 +8,7 @@ urlpatterns = [
     url(r'^', include('fabapp.urls')),
     url(r'^', include('exbrapp.urls')),
     url(r'^', include('fabrapp.urls')),
+     url(r'^', include('review.urls')),
     url(r'^api-auth/',
         include('rest_framework.urls', namespace='rest_framework'))
 ]

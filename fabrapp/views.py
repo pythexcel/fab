@@ -1,11 +1,9 @@
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.authtoken.models import Token
 from rest_framework.parsers import MultiPartParser, FormParser, FileUploadParser
 from fabrapp.models import Portfolio
 from fabapp.models import User
 from rest_framework import status
-from django.contrib.auth import authenticate
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from fabrapp.serializers import FabricatorSerializer

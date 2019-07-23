@@ -1,11 +1,8 @@
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.authtoken.models import Token
-from rest_framework.parsers import MultiPartParser, FormParser, FileUploadParser
 from fabapp.models import User, Exhibition, ExhibitFab
 from exbrapp.models import Exhibitor
 from rest_framework import status
-from django.contrib.auth import authenticate
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from exbrapp.serializers import (ExhibitorSerializer)
@@ -34,7 +31,7 @@ class ExhibitorRequire(APIView):
             exhibhit = ExhibitorSerializer(serializer, many=True)
             return Response(exhibhit.data)
         else:
-            return Response([], status=status.HTTP_400_BAD_REQUEST)
+            return Response([])
 
 
 class ExhibhitDetails(APIView):
