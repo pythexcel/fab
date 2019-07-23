@@ -5,3 +5,9 @@ env
 .vscode
 .env
 media
+/exbrapp/__pycache__
+/exbrapp/migrations
+/fabrapp/__pycache__
+/fabrapp/migrations
+/review/migrations
+/review/__pycache__
