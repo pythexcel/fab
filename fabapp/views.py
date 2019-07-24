@@ -83,6 +83,18 @@ class Userprofile(APIView):
             }
         ])
 
+    def put(self, request, pk=None):
+
+        user = User.objects.get(id=pk)
+        serializer = UserRegisterSerializer(user,
+                                            data=request.data,
+                                            partial=True)
+        if serializer.is_valid():
+
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 class CreateExhibition(APIView):
     permission_classes = (IsAdminUser, )
@@ -97,10 +109,10 @@ class CreateExhibition(APIView):
     def get(self, request, format=None):
         exhibition = Exhibition.objects.all()
         serializer = ExhibitionDetail(exhibition, many=True)
-        fabricator =  ExhibitFab.objects.all()
-        serial = ExhibitFabricators(fabricator,many=True)
+        fabricator = ExhibitFab.objects.all()
+        serial = ExhibitFabricators(fabricator, many=True)
         exhibhitor = Exhibitor.objects.all()
-        ser = ExhibitorSerializer(exhibhitor,many=True)
+        ser = ExhibitorSerializer(exhibhitor, many=True)
         exhibitions = []
         for data in serializer.data:
             fab_list = []
@@ -113,7 +125,7 @@ class CreateExhibition(APIView):
                     exb_list.append(detail)
             data['fabricators'] = fab_list
             data['exhibhitors'] = exb_list
-            exhibitions.append(data)       
+            exhibitions.append(data)
         if len(exhibitions) > 0:
             return Response(exhibitions)
         else:
@@ -183,7 +195,7 @@ class ExhibitorList(APIView):
 class BanUser(APIView):
     permission_classes = (IsAdminUser, )
 
-    def get(self, request, format=None,pk=None):
+    def get(self, request, format=None, pk=None):
         user = User.objects.get(id=pk)
         if user is not None:
             user.is_active = False
@@ -202,5 +214,3 @@ class ExhibitionFab(APIView):
         exi.save()
         serializer = ExhibitFabricators(exi, many=False)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-

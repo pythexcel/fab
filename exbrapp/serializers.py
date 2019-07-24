@@ -55,7 +55,7 @@ class ExhibitorSerializer(serializers.ModelSerializer):
         return exi
 
     def update(self, instance, validated_data):
-        print(instance)
+        print(validated_data)
         instance.size = validated_data.get('size', instance.size)
         instance.stall_no = validated_data.get('stall_no', instance.stall_no)
         instance.color_theme = validated_data.get('color_theme',
@@ -65,30 +65,49 @@ class ExhibitorSerializer(serializers.ModelSerializer):
         instance.website_link = validated_data.get('website_link',
                                                    instance.website_link)
         instance.save()
-
-        furniture_data = validated_data.get('furnitures')
-        branding_data = validated_data.get('brandings')
-        product_data = validated_data.get('products')
-
-        for data in furniture_data:
-            data_id = data.get('id', None)
-            if data_id:
-                fur_data = FurnitureExhibitorDetail.objects.get(
-                    id=data_id, furnitures=instance)
-                fur_data.furniture = data.get('furniture', fur_data.furniture)
-                fur_data.save()
-        for elem in branding_data:
-            elem_id = elem.get('id', None)
-            if elem_id:
-                brd_data = BrandingExhibitorDetail.objects.get(
-                    id=elem_id, brandings=instance)
-                brd_data.branding = data.get('branding', brd_data.branding)
-                brd_data.save()
-        for detail in product_data:
-            detail_id = detail.get('id', None)
-            if detail_id:
-                pro_data = ProductExhibitorDetail.objects.get(
-                    id=detail_id, products=instance)
-                pro_data.products = data.get('products', pro_data.products)
-                pro_data.save()
+        if 'furnitures' in validated_data:
+            furniture_data = validated_data.get('furnitures')
+            for data in furniture_data:
+                data_id = data.get('id', None)
+                if data_id:
+                    fur_data = FurnitureExhibitorDetail.objects.get(
+                        id=data_id, furnitures=instance)
+                    fur_data.furniture = data.get('furniture',
+                                                  fur_data.furniture)
+                    fur_data.save()
+                else:
+                    fur_data = FurnitureExhibitorDetail.objects.create(
+                        **data, furnitures=instance)
+        else:
+            pass
+        if 'brandings' in validated_data:
+            branding_data = validated_data.get('brandings')
+            for elem in branding_data:
+                elem_id = elem.get('id', None)
+                if elem_id:
+                    brd_data = BrandingExhibitorDetail.objects.get(
+                        id=elem_id, brandings=instance)
+                    brd_data.branding = data.get('branding', brd_data.branding)
+                    brd_data.save()
+                else:
+                    brd_data = BrandingExhibitorDetail.objects.create(
+                        **elem, brandings=instance)
+        else:
+            pass
+        if 'products' in validated_data:
+            product_data = validated_data.get('products')
+            for detail in product_data:
+                detail_id = detail.get('id', None)
+                print(detail_id)
+                if detail_id:
+                    pro_data = ProductExhibitorDetail.objects.get(
+                        id=detail_id, products=instance)
+                    pro_data.products = data.get('products', pro_data.products)
+                    print(pro_data.products)
+                    pro_data.save()
+                else:
+                    pro_data = ProductExhibitorDetail.objects.create(
+                        **detail, products=instance)
+        else:
+            pass
         return instance

@@ -6,7 +6,7 @@ from rest_framework.validators import UniqueValidator
 
 
 class UserRegisterSerializer(serializers.ModelSerializer):
-    profile_image = Base64ImageField(use_url=True)
+    profile_image = Base64ImageField(use_url=True,required=False)
     password = serializers.CharField(write_only=True, required=True)
 
     class Meta:
@@ -18,7 +18,6 @@ class UserRegisterSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         password = validated_data.pop("password", None)
         email = validated_data.pop("email", None)
-
         user = User.objects.create(email=email,
                                    password=make_password(password),
                                    **validated_data)
@@ -26,10 +25,7 @@ class UserRegisterSerializer(serializers.ModelSerializer):
         # is called if we save serializer if it have an instance
 
     def update(self, instance, validated_data):
-        password = validated_data.pop("password")
         instance.__dict__.update(validated_data)
-        if password:
-            instance.set_password(password)
         instance.save()
         return instance
 
@@ -37,7 +33,7 @@ class UserRegisterSerializer(serializers.ModelSerializer):
 class UserDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('email', 'password', 'role', 'name', 'status', 'bio',
+        fields = ('id','email', 'password', 'role', 'name', 'status', 'bio',
                   'phone', 'profile_image', 'is_active', 'is_staff',
                   'is_superuser')
 

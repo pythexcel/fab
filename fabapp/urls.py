@@ -12,7 +12,8 @@ urlpatterns = [
     url('exifab/<int:pk>/<int:pk_user>', views.ExhibitionFab.as_view()),
     url('exhibtorlist', views.ExhibitorList.as_view()),
     url('fabricatorlist', views.FabricatorList.as_view()),
-    url('banuser/<int:pk>', views.BanUser.as_view())
+    url('banuser/<int:pk>', views.BanUser.as_view()),
+    url('profile/<int:pk>', views.Userprofile.as_view()),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns, allowed=['json', 'html'])
