@@ -65,21 +65,21 @@ class ExhibitorSerializer(serializers.ModelSerializer):
         instance.website_link = validated_data.get('website_link',
                                                    instance.website_link)
         instance.save()
+        
         if 'furnitures' in validated_data:
+
             furniture_data = validated_data.get('furnitures')
             for data in furniture_data:
                 data_id = data.get('id', None)
                 if data_id:
                     fur_data = FurnitureExhibitorDetail.objects.get(
-                        id=data_id, furnitures=instance)
-                    fur_data.furniture = data.get('furniture',
-                                                  fur_data.furniture)
+                       id=data_id, furnitures=instance)
+                    fur_data.furniture = data.get('furniture', fur_data.furniture)
                     fur_data.save()
                 else:
                     fur_data = FurnitureExhibitorDetail.objects.create(
                         **data, furnitures=instance)
-        else:
-            pass
+
         if 'brandings' in validated_data:
             branding_data = validated_data.get('brandings')
             for elem in branding_data:
@@ -87,27 +87,28 @@ class ExhibitorSerializer(serializers.ModelSerializer):
                 if elem_id:
                     brd_data = BrandingExhibitorDetail.objects.get(
                         id=elem_id, brandings=instance)
-                    brd_data.branding = data.get('branding', brd_data.branding)
+                    brd_data.branding = elem.get('branding', brd_data.branding)
                     brd_data.save()
                 else:
                     brd_data = BrandingExhibitorDetail.objects.create(
                         **elem, brandings=instance)
-        else:
-            pass
+        
         if 'products' in validated_data:
             product_data = validated_data.get('products')
             for detail in product_data:
                 detail_id = detail.get('id', None)
-                print(detail_id)
+                
                 if detail_id:
+                    
                     pro_data = ProductExhibitorDetail.objects.get(
                         id=detail_id, products=instance)
-                    pro_data.products = data.get('products', pro_data.products)
-                    print(pro_data.products)
+                      
+                    pro_data.product = detail.get('product', pro_data.product)
+                    print(pro_data.product)
+                   
                     pro_data.save()
                 else:
                     pro_data = ProductExhibitorDetail.objects.create(
                         **detail, products=instance)
-        else:
-            pass
+                     
         return instance
