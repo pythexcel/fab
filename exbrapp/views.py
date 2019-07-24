@@ -1,11 +1,11 @@
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from fabapp.models import User, Exhibition, ExhibitFab
-from exbrapp.models import Exhibitor
+from exbrapp.models import Exhibitor,Bid
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
-from exbrapp.serializers import (ExhibitorSerializer)
+from exbrapp.serializers import (ExhibitorSerializer,BidSerializer)
 from exbrapp.permissions import IsExhibitor
 from fabapp.serializers import UserDetailSerializer, ExhibitFabricators
 
@@ -86,3 +86,30 @@ class Fabricator_dt(APIView):
         user = User.objects.get(id=serializer.data['user'])
         serial = UserDetailSerializer(user, many=False)
         return Response(serial.data)
+
+class CreateBid(APIView):
+    permission_classes = (IsAuthenticated, IsExhibitor)
+
+    def get(self,request,format=None):
+        user = self.request.user 
+        bid = Bid.objects.filter(mine_exhib__user__id=user.id)
+        serializer = BidSerializer(bid, many=True)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+    def post(self,request,format=None,pk=None,exi_pk=None):
+        fab_user = User.objects.get(pk=pk)
+        print(fab_user)
+        exhibhition = Exhibitor.objects.get(pk=exi_pk)
+        print(exhibhition.id)
+        bid = Bid(fabs_user_id=fab_user.id,mine_exhib_id=exhibhition.id)
+        bid.save()
+        serializer = BidSerializer(bid, many=False)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    def put(self,request,format=None,pk=None):
+        bid = Bid.objects.get(id=pk)
+        bid.work_status = True
+        bid.save()
+        ser = BidSerializer(bid,many=False)
+        return Response(ser.data)

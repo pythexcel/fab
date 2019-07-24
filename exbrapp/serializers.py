@@ -1,7 +1,8 @@
 from exbrapp.models import (Exhibitor, ProductExhibitorDetail,
-                            BrandingExhibitorDetail, FurnitureExhibitorDetail)
+                            BrandingExhibitorDetail, FurnitureExhibitorDetail,Bid)
 from rest_framework import serializers
 from fabapp.serializers import UserDetailSerializer, ExhibitionDetail
+
 
 
 class FurnituredDetail(serializers.ModelSerializer):
@@ -112,3 +113,10 @@ class ExhibitorSerializer(serializers.ModelSerializer):
                         **detail, products=instance)
                      
         return instance
+
+class BidSerializer(serializers.ModelSerializer):
+    mine_exhib = ExhibitorSerializer(many=False)
+    fabs_user = UserDetailSerializer(many=False)
+    class Meta:
+        model = Bid
+        fields = '__all__'

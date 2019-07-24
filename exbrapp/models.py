@@ -41,3 +41,16 @@ class FurnitureExhibitorDetail(models.Model):
                                    related_name='furnitures',
                                    on_delete=models.CASCADE)
     furniture = models.TextField()
+
+
+class Bid(models.Model):
+    fabs_user = models.ForeignKey(User,
+                                 related_name='fabs_user',
+                                 on_delete=models.CASCADE)
+    mine_exhib = models.ForeignKey(Exhibitor,
+                                 related_name='mine_exhib',
+                                 on_delete=models.CASCADE)
+    work_status = models.BooleanField(default=False)
+    response_status = models.BooleanField(default=False)
+    comment = models.CharField(max_length=8000, null=True, blank=True)
+    total_price = models.FloatField(null=True, blank=True, default=None)

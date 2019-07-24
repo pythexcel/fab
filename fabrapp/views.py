@@ -9,6 +9,8 @@ from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from fabrapp.serializers import FabricatorSerializer
 from fabrapp.permissions import IsFabricator
 from fabapp.serializers import UserDetailSerializer
+from exbrapp.models import Bid
+from exbrapp.serializers import BidSerializer
 
 
 def modify_input_for_multiple_files(image):
@@ -48,4 +50,26 @@ class FabricatorPortfolio(APIView):
         exi = Portfolio.objects.get(user=self.request.user, pk=pk)
         exi.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+class BidResponse(APIView):
+    def get(self,request,format=None):
+        user = self.request.user
+        print(user.id)
+
+        bids = Bid.objects.filter(fabs_user_id=user.id,work_status=False)
+        serializer = BidSerializer(bids,many=True)
+        return Response(serializer.data)
+
+    def put(self,request,format=None,pk=None):
+        comment = request.data.get("comment")
+        total_price = request.data.get("total_price")
+        bid = Bid.objects.get(id=pk)
+        bid.comment = comment
+        bid.total_price = total_price
+        bid.response_status = True
+        bid.save()
+        serial = BidSerializer(bid,many=False)
+        return Response(serial.data)
+
+
 
