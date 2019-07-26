@@ -133,7 +133,7 @@ class CreateExhibition(APIView):
 
     def put(self, request, format=None, pk=None):
         exhibition = Exhibition.objects.get(pk=pk)
-        serialzier = ExhibitionSerializer(exhibition, data=request.data)
+        serialzier = ExhibitionSerializer(exhibition, data=request.data,partial=True)
         if serialzier.is_valid():
             serialzier.save()
             return Response(serialzier.data)
@@ -149,7 +149,7 @@ class ListExhibhition(APIView):
     permission_classes = (IsAuthenticated, )
 
     def get(self, request, format=None):
-        exhibition = Exhibition.objects.all()
+        exhibition = Exhibition.objects.filter(Running_status=True)
         if exhibition is not None:
             serializer = ExhibitionDetail(exhibition, many=True)
             return Response(serializer.data)
@@ -208,8 +208,8 @@ class ExhibitionFab(APIView):
     permission_classes = (IsAdminUser, )
 
     def post(self, request, format=None, pk=None, pk_user=None):
-        exhibhition = Exhibition.objects.get(pk=pk)
-        user = User.objects.get(pk=pk_user)
+        exhibhition = Exhibition.objects.get(pk=pk,Running_status=True)
+        user = User.objects.get(pk=pk_user,is_active=True)
         exi = ExhibitFab(exhibition_id=exhibhition.id, user_id=user.id)
         exi.save()
         serializer = ExhibitFabricators(exi, many=False)

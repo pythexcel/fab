@@ -1,6 +1,6 @@
+from django.utils import timezone
 from django.db import models
 from fabapp.managers import UserManager
-import datetime
 from django.contrib.auth.base_user import AbstractBaseUser
 from django.contrib.auth.models import PermissionsMixin
 from django.conf import settings
@@ -24,6 +24,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
+    cron_review = models.BooleanField(default=False)
+    avg_rating = models.IntegerField(null=True,blank=True)
 
     objects = UserManager()
 
@@ -41,7 +43,10 @@ class Exhibition(models.Model):
                              null=True,
                              on_delete=models.CASCADE)
     exhibition_name = models.CharField(max_length=350)
-
+    Desciption = models.CharField(max_length=8000,null=True, blank=True)
+    Start_date =  models.DateTimeField('start_date',default=timezone.now, blank=True) 
+    end_date =  models.DateTimeField('end_date',default=timezone.now, blank=True)
+    Running_status = models.BooleanField(default=True)
 
 class ExhibitFab(models.Model):
     exhibition = models.ForeignKey(Exhibition,

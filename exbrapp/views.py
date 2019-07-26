@@ -69,7 +69,7 @@ class Fabricatorslist(APIView):
         serializer = ExhibitFabricators(exi, many=True)
         user_list = []
         for data in serializer.data:
-            user = User.objects.get(id=data['user'])
+            user = User.objects.get(id=data['user'],is_active=True)
             serial = UserDetailSerializer(user, many=False)
             user_list.append(serial.data)
 
@@ -83,7 +83,7 @@ class Fabricator_dt(APIView):
         exi = ExhibitFab.objects.get(exhibition_id=pk, user_id=user_pk)
         serializer = ExhibitFabricators(exi, many=False)
         print(serializer.data)
-        user = User.objects.get(id=serializer.data['user'])
+        user = User.objects.get(id=serializer.data['user'],is_active=True)
         serial = UserDetailSerializer(user, many=False)
         return Response(serial.data)
 
@@ -98,7 +98,7 @@ class CreateBid(APIView):
 
 
     def post(self,request,format=None,pk=None,exi_pk=None):
-        fab_user = User.objects.get(pk=pk)
+        fab_user = User.objects.get(pk=pk,is_active=True)
         print(fab_user)
         exhibhition = Exhibitor.objects.get(pk=exi_pk)
         print(exhibhition.id)
