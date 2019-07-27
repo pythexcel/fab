@@ -223,7 +223,7 @@ class ExhibitionFab(APIView):
 class Addbrand(APIView):
     permission_classes = (IsAdminUser, )
     def post(self, request,format=None):
-        branding = request.data.get("branding")
+        branding = request.data.get("brandings")
         for elem in branding:
             br = AvailBrand(user_id=self.request.user.id,branding=elem['branding'])
             br.save()
@@ -244,7 +244,7 @@ class Addprod(APIView):
 class Addfurni(APIView):
     permission_classes = (IsAdminUser, )
     def post(self, request,format=None):
-        furniture = request.data.get("furniture")
+        furniture = request.data.get("furnitures")
         for elem in furniture:
             fr = AvailFurni(user_id=self.request.user.id,furniture=elem['furniture'])
             fr.save()
@@ -259,6 +259,10 @@ class listItem(APIView):
         serial = AvailProdSerializer(products,many=True)
         furniture = AvailFurni.objects.all()
         ser = AvailFurniSerializer(furniture,many=True)
-        return Response([{"brandings" : serialzier.data},{"products" :serial.data},{"furnitures" :ser.data}])
+        dict = {}
+        dict['brandings'] = serialzier.data
+        dict['products'] = serial.data
+        dict['furnitures'] = ser.data
+        return Response(dict)
 
         
