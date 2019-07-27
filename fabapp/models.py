@@ -57,3 +57,35 @@ class ExhibitFab(models.Model):
                              blank=True,
                              null=True,
                              on_delete=models.CASCADE)
+
+class AvailProd(models.Model):
+    user = models.ForeignKey(User,
+                             related_name='admin_prod',
+                             blank=True,
+                             null=True,
+                             on_delete=models.CASCADE)
+    
+    product = models.TextField()
+    selected =  models.BooleanField(default=False)
+    
+class AvailBrand(models.Model):
+    user = models.ForeignKey(User,
+                             related_name='admin_brand',
+                             blank=True,
+                             null=True,
+                             on_delete=models.CASCADE)
+    
+    branding = models.TextField()
+    selected =  models.BooleanField(default=False)
+
+class AvailFurni(models.Model):
+    user = models.ForeignKey(User,
+                             related_name='admin_furni',
+                             blank=True,
+                             null=True,
+                             on_delete=models.CASCADE)
+    furniture = models.TextField()
+    selected =  models.BooleanField(default=False)
+                         
+    
+    

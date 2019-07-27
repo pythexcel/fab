@@ -2,7 +2,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.authtoken.models import Token
 from rest_framework.parsers import MultiPartParser, FormParser, FileUploadParser
-from fabapp.models import User, Exhibition, ExhibitFab
+from fabapp.models import User, Exhibition, ExhibitFab,AvailBrand
 from rest_framework import status
 from django.contrib.auth import authenticate
 from rest_framework.response import Response
@@ -13,7 +13,8 @@ from fabrapp.serializers import FabricatorSerializer
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from fabapp.serializers import (UserRegisterSerializer, UserDetailSerializer,
                                 ExhibitionSerializer, ExhibitFabricators,
-                                ExhibitionDetail)
+                                ExhibitionDetail, AvailBrandSerializer,
+                                AvailFurniSerializer, AvailProdSerializer)
 
 
 class Test(APIView):
@@ -133,7 +134,9 @@ class CreateExhibition(APIView):
 
     def put(self, request, format=None, pk=None):
         exhibition = Exhibition.objects.get(pk=pk)
-        serialzier = ExhibitionSerializer(exhibition, data=request.data,partial=True)
+        serialzier = ExhibitionSerializer(exhibition,
+                                          data=request.data,
+                                          partial=True)
         if serialzier.is_valid():
             serialzier.save()
             return Response(serialzier.data)
@@ -208,9 +211,26 @@ class ExhibitionFab(APIView):
     permission_classes = (IsAdminUser, )
 
     def post(self, request, format=None, pk=None, pk_user=None):
-        exhibhition = Exhibition.objects.get(pk=pk,Running_status=True)
-        user = User.objects.get(pk=pk_user,is_active=True)
+        exhibhition = Exhibition.objects.get(pk=pk, Running_status=True)
+        user = User.objects.get(pk=pk_user, is_active=True)
         exi = ExhibitFab(exhibition_id=exhibhition.id, user_id=user.id)
         exi.save()
         serializer = ExhibitFabricators(exi, many=False)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+# class Additems(APIView):
+#     def post(self, request,format=None):
+#         brandiings = request.data.get("brandings")
+#         for data in brandiings:
+#             br = AvailBrand.objects.create(branding=data,user_id=self.request.user.id)
+#             serializer = AvailBrandSerializer(br,many=True)
+#             return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+#         # print(brandiings)
+#         # serializer = AvailBrandSerializer(brandiings,many=True)
+#         # print(serializer.data)
+#         # if serializer.is_valid():
+#         #     serializer.save(user=request.user)
+#             return Response(serializer.data, status=status.HTTP_201_CREATED)
+#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

@@ -1,4 +1,4 @@
-from fabapp.models import (User, Exhibition, ExhibitFab)
+from fabapp.models import (User, Exhibition, ExhibitFab,AvailBrand,AvailFurni,AvailProd)
 from rest_framework import serializers
 from drf_extra_fields.fields import Base64ImageField
 from django.contrib.auth.hashers import make_password
@@ -75,3 +75,29 @@ class ExhibitFabricators(serializers.ModelSerializer):
     class Meta:
         model = ExhibitFab
         fields = '__all__'
+
+
+# class AvailProdSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = AvailProd
+#         fields = '__all__'
+
+
+# class AvailBrandSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = AvailBrand
+#         fields = '__all__'
+
+#     def create(self, validated_data):
+#         print(validated_data)
+#         brand_data = validated_data.get('brandings')
+#         for data in brand_data:
+#             av_brand = AvailBrand.objects.create(**data)
+#         return av_brand
+
+
+
+# class AvailFurniSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = AvailFurni
+#         fields = '__all__'
