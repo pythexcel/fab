@@ -77,27 +77,19 @@ class ExhibitFabricators(serializers.ModelSerializer):
         fields = '__all__'
 
 
-# class AvailProdSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = AvailProd
-#         fields = '__all__'
+class AvailProdSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AvailProd
+        fields = '__all__'
 
 
-# class AvailBrandSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = AvailBrand
-#         fields = '__all__'
-
-#     def create(self, validated_data):
-#         print(validated_data)
-#         brand_data = validated_data.get('brandings')
-#         for data in brand_data:
-#             av_brand = AvailBrand.objects.create(**data)
-#         return av_brand
+class AvailBrandSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AvailBrand
+        fields = '__all__'
 
 
-
-# class AvailFurniSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = AvailFurni
-#         fields = '__all__'
+class AvailFurniSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AvailFurni
+        fields = '__all__'
