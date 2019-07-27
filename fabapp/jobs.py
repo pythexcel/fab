@@ -7,7 +7,7 @@ from fabapp.schdulers import UserRating,CronReset,DisableExi
 def Ratingjob():
     scheduler = BackgroundScheduler(timezone="Asia/Kolkata")
     # scheduler.add_job(UserRating, 'cron', hour=19, minute=44)
-    scheduler.add_job(UserRating, trigger='interval',seconds=5000)
+    scheduler.add_job(UserRating, trigger='interval',seconds=10000)
     scheduler.start()
 
 def Resetjob():

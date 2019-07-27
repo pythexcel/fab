@@ -8,7 +8,7 @@ from django.utils import timezone
 
 def UserRating():
     print("User Rating schduler Running....")
-    rv = User.objects.filter(cron_review=False,is_active=True).first()
+    rv = User.objects.filter(cron_review=False,is_active=True,is_superuser=False,is_staff=False).first()
     if rv:
         rv.cron_review = True
         rv.save()
