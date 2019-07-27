@@ -13,8 +13,7 @@ from fabrapp.serializers import FabricatorSerializer
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from fabapp.serializers import (UserRegisterSerializer, UserDetailSerializer,
                                 ExhibitionSerializer, ExhibitFabricators,
-                                ExhibitionDetail, AvailBrandSerializer,
-                                AvailFurniSerializer, AvailProdSerializer)
+                                ExhibitionDetail)
 
 
 class Test(APIView):
