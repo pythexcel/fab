@@ -1,4 +1,5 @@
-from fabapp.models import (User, Exhibition, ExhibitFab,AvailBrand,AvailFurni,AvailProd)
+from fabapp.models import (User, Exhibition, ExhibitFab, AvailBrand,
+                           AvailFurni, AvailProd)
 from rest_framework import serializers
 from drf_extra_fields.fields import Base64ImageField
 from django.contrib.auth.hashers import make_password
