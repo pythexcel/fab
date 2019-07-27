@@ -10,7 +10,7 @@ class FurnituredDetail(serializers.ModelSerializer):
 
     class Meta:
         model = FurnitureExhibitorDetail
-        fields = ('id', 'furniture')
+        fields = ('id', 'furniture','quantity')
 
 
 class BrandingDetail(serializers.ModelSerializer):
@@ -18,7 +18,7 @@ class BrandingDetail(serializers.ModelSerializer):
 
     class Meta:
         model = BrandingExhibitorDetail
-        fields = ('id', 'branding')
+        fields = ('id', 'branding','quantity')
 
 
 class ProductDetail(serializers.ModelSerializer):
@@ -26,7 +26,7 @@ class ProductDetail(serializers.ModelSerializer):
 
     class Meta:
         model = ProductExhibitorDetail
-        fields = ('id', 'product')
+        fields = ('id', 'product','quantity')
 
 
 class ExhibitorSerializer(serializers.ModelSerializer):
@@ -48,10 +48,13 @@ class ExhibitorSerializer(serializers.ModelSerializer):
         product_data = validated_data.pop('products')
         exi = Exhibitor.objects.create(**validated_data)
         for data in furniture_data:
+            print(data)
             FurnitureExhibitorDetail.objects.create(furnitures=exi, **data)
         for elem in branding_data:
+            print(elem)
             BrandingExhibitorDetail.objects.create(brandings=exi, **elem)
         for detail in product_data:
+            print(detail)
             ProductExhibitorDetail.objects.create(products=exi, **detail)
         return exi
 
@@ -76,6 +79,7 @@ class ExhibitorSerializer(serializers.ModelSerializer):
                     fur_data = FurnitureExhibitorDetail.objects.get(
                        id=data_id, furnitures=instance)
                     fur_data.furniture = data.get('furniture', fur_data.furniture)
+                    fur_data.quantity = data.get('quantity', fur_data.quantity)
                     fur_data.save()
                 else:
                     fur_data = FurnitureExhibitorDetail.objects.create(
@@ -103,8 +107,9 @@ class ExhibitorSerializer(serializers.ModelSerializer):
                     
                     pro_data = ProductExhibitorDetail.objects.get(
                         id=detail_id, products=instance)
-                      
+                    print(pro_data)  
                     pro_data.product = detail.get('product', pro_data.product)
+                    pro_data.quantity = detail.get('quantity', pro_data.quantity)
                     print(pro_data.product)
                    
                     pro_data.save()
