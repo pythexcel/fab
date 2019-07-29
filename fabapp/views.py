@@ -149,7 +149,7 @@ class CreateExhibition(APIView):
 
 
 class ListExhibhition(APIView):
-    permission_classes = (IsAuthenticated, )
+
 
     def get(self, request, format=None):
         exhibition = Exhibition.objects.filter(Running_status=True)
@@ -251,7 +251,7 @@ class Addfurni(APIView):
         return Response("Furniture added",status=status.HTTP_201_CREATED)
 
 class listItem(APIView):
-    permission_classes = (IsAdminUser, )
+
     def get(self, request, format=None, pk=None):
         branding = AvailBrand.objects.all()
         serialzier = AvailBrandSerializer(branding,many=True)
