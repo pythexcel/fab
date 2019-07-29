@@ -15,3 +15,4 @@ class Review(models.Model):
     
     comment = models.CharField(max_length=8000, null=True, blank=True)                
     rating = models.IntegerField(null=True,blank=True)
+    

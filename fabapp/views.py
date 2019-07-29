@@ -2,7 +2,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.authtoken.models import Token
 from rest_framework.parsers import MultiPartParser, FormParser, FileUploadParser
-from fabapp.models import User, Exhibition, ExhibitFab
+from fabapp.models import User, Exhibition, ExhibitFab,AvailBrand,AvailProd,AvailFurni
 from rest_framework import status
 from django.contrib.auth import authenticate
 from rest_framework.response import Response
@@ -13,7 +13,8 @@ from fabrapp.serializers import FabricatorSerializer
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from fabapp.serializers import (UserRegisterSerializer, UserDetailSerializer,
                                 ExhibitionSerializer, ExhibitFabricators,
-                                ExhibitionDetail)
+                                ExhibitionDetail, AvailBrandSerializer,
+                                AvailFurniSerializer, AvailProdSerializer)
 
 
 class Test(APIView):
@@ -83,6 +84,18 @@ class Userprofile(APIView):
             }
         ])
 
+    def put(self, request, pk=None):
+
+        user = User.objects.get(id=pk)
+        serializer = UserRegisterSerializer(user,
+                                            data=request.data,
+                                            partial=True)
+        if serializer.is_valid():
+
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 class CreateExhibition(APIView):
     permission_classes = (IsAdminUser, )
@@ -97,10 +110,10 @@ class CreateExhibition(APIView):
     def get(self, request, format=None):
         exhibition = Exhibition.objects.all()
         serializer = ExhibitionDetail(exhibition, many=True)
-        fabricator =  ExhibitFab.objects.all()
-        serial = ExhibitFabricators(fabricator,many=True)
+        fabricator = ExhibitFab.objects.all()
+        serial = ExhibitFabricators(fabricator, many=True)
         exhibhitor = Exhibitor.objects.all()
-        ser = ExhibitorSerializer(exhibhitor,many=True)
+        ser = ExhibitorSerializer(exhibhitor, many=True)
         exhibitions = []
         for data in serializer.data:
             fab_list = []
@@ -113,7 +126,7 @@ class CreateExhibition(APIView):
                     exb_list.append(detail)
             data['fabricators'] = fab_list
             data['exhibhitors'] = exb_list
-            exhibitions.append(data)       
+            exhibitions.append(data)
         if len(exhibitions) > 0:
             return Response(exhibitions)
         else:
@@ -121,7 +134,9 @@ class CreateExhibition(APIView):
 
     def put(self, request, format=None, pk=None):
         exhibition = Exhibition.objects.get(pk=pk)
-        serialzier = ExhibitionSerializer(exhibition, data=request.data)
+        serialzier = ExhibitionSerializer(exhibition,
+                                          data=request.data,
+                                          partial=True)
         if serialzier.is_valid():
             serialzier.save()
             return Response(serialzier.data)
@@ -134,10 +149,10 @@ class CreateExhibition(APIView):
 
 
 class ListExhibhition(APIView):
-    permission_classes = (IsAuthenticated, )
+
 
     def get(self, request, format=None):
-        exhibition = Exhibition.objects.all()
+        exhibition = Exhibition.objects.filter(Running_status=True)
         if exhibition is not None:
             serializer = ExhibitionDetail(exhibition, many=True)
             return Response(serializer.data)
@@ -183,7 +198,7 @@ class ExhibitorList(APIView):
 class BanUser(APIView):
     permission_classes = (IsAdminUser, )
 
-    def get(self, request, format=None,pk=None):
+    def get(self, request, format=None, pk=None):
         user = User.objects.get(id=pk)
         if user is not None:
             user.is_active = False
@@ -196,11 +211,58 @@ class ExhibitionFab(APIView):
     permission_classes = (IsAdminUser, )
 
     def post(self, request, format=None, pk=None, pk_user=None):
-        exhibhition = Exhibition.objects.get(pk=pk)
-        user = User.objects.get(pk=pk_user)
+        exhibhition = Exhibition.objects.get(pk=pk, Running_status=True)
+        user = User.objects.get(pk=pk_user, is_active=True)
         exi = ExhibitFab(exhibition_id=exhibhition.id, user_id=user.id)
         exi.save()
         serializer = ExhibitFabricators(exi, many=False)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
+
+class Addbrand(APIView):
+    permission_classes = (IsAdminUser, )
+    def post(self, request,format=None):
+        branding = request.data.get("brandings")
+        for elem in branding:
+            br = AvailBrand(user_id=self.request.user.id,branding=elem['branding'])
+            br.save()
+        return Response("Brands added",status=status.HTTP_201_CREATED)
+
+
+class Addprod(APIView):
+    permission_classes = (IsAdminUser, )
+    def post(self, request,format=None):
+        products = request.data.get("products")
+        for elem in products:
+            pr = AvailProd(user_id=self.request.user.id,product=elem['product'])
+            pr.save()
+        return Response("Products added",status=status.HTTP_201_CREATED)
+
+
+
+class Addfurni(APIView):
+    permission_classes = (IsAdminUser, )
+    def post(self, request,format=None):
+        furniture = request.data.get("furnitures")
+        for elem in furniture:
+            fr = AvailFurni(user_id=self.request.user.id,furniture=elem['furniture'])
+            fr.save()
+        return Response("Furniture added",status=status.HTTP_201_CREATED)
+
+class listItem(APIView):
+
+    def get(self, request, format=None, pk=None):
+        branding = AvailBrand.objects.all()
+        serialzier = AvailBrandSerializer(branding,many=True)
+        products = AvailProd.objects.all()
+        serial = AvailProdSerializer(products,many=True)
+        furniture = AvailFurni.objects.all()
+        ser = AvailFurniSerializer(furniture,many=True)
+        dict = {}
+        dict['brandings'] = serialzier.data
+        dict['products'] = serial.data
+        dict['furnitures'] = ser.data
+        return Response(dict)
+
+        

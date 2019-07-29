@@ -27,6 +27,10 @@ class ProductExhibitorDetail(models.Model):
                                  related_name='products',
                                  on_delete=models.CASCADE)
     product = models.TextField()
+    quantity = models.IntegerField(default=0)
+
+    def __str__(self):
+        return '%d: %s' % (self.quantity, self.product)
 
 
 class BrandingExhibitorDetail(models.Model):
@@ -34,6 +38,11 @@ class BrandingExhibitorDetail(models.Model):
                                   related_name='brandings',
                                   on_delete=models.CASCADE)
     branding = models.TextField()
+    quantity = models.IntegerField(default=0)
+
+
+    def __str__(self):
+        return '%d: %s' % (self.quantity, self.product)
 
 
 class FurnitureExhibitorDetail(models.Model):
@@ -41,3 +50,21 @@ class FurnitureExhibitorDetail(models.Model):
                                    related_name='furnitures',
                                    on_delete=models.CASCADE)
     furniture = models.TextField()
+    quantity = models.IntegerField(default=0)
+
+
+    def __str__(self):
+        return '%d: %s' % (self.quantity, self.product)
+
+
+class Bid(models.Model):
+    fabs_user = models.ForeignKey(User,
+                                 related_name='fabs_user',
+                                 on_delete=models.CASCADE)
+    mine_exhib = models.ForeignKey(Exhibitor,
+                                 related_name='mine_exhib',
+                                 on_delete=models.CASCADE)
+    work_status = models.BooleanField(default=False)
+    response_status = models.BooleanField(default=False)
+    comment = models.CharField(max_length=8000, null=True, blank=True)
+    total_price = models.FloatField(null=True, blank=True, default=None)

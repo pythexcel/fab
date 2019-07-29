@@ -14,13 +14,10 @@ class UserReviewDeails(APIView):
 
     def get(self,request,format=None):
         lg_user = self.request.user
-        print(lg_user.id)
         user = Review.objects.filter(user_id=lg_user.id)
         ser = ReviewSeializer(user,many=True)
-        print(ser.data)
         mine = Review.objects.filter(rated_user_id=lg_user.id)
         serial = ReviewSeializer(mine,many=True)
-        print(serial.data)
         total = ser.data + serial.data
         return Response(total)
         

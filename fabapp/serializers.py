@@ -1,4 +1,5 @@
-from fabapp.models import (User, Exhibition, ExhibitFab)
+from fabapp.models import (User, Exhibition, ExhibitFab, AvailBrand,
+                           AvailFurni, AvailProd)
 from rest_framework import serializers
 from drf_extra_fields.fields import Base64ImageField
 from django.contrib.auth.hashers import make_password
@@ -6,7 +7,7 @@ from rest_framework.validators import UniqueValidator
 
 
 class UserRegisterSerializer(serializers.ModelSerializer):
-    profile_image = Base64ImageField(use_url=True)
+    profile_image = Base64ImageField(use_url=True, required=False)
     password = serializers.CharField(write_only=True, required=True)
 
     class Meta:
@@ -18,7 +19,6 @@ class UserRegisterSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         password = validated_data.pop("password", None)
         email = validated_data.pop("email", None)
-
         user = User.objects.create(email=email,
                                    password=make_password(password),
                                    **validated_data)
@@ -26,10 +26,7 @@ class UserRegisterSerializer(serializers.ModelSerializer):
         # is called if we save serializer if it have an instance
 
     def update(self, instance, validated_data):
-        password = validated_data.pop("password")
         instance.__dict__.update(validated_data)
-        if password:
-            instance.set_password(password)
         instance.save()
         return instance
 
@@ -37,7 +34,7 @@ class UserRegisterSerializer(serializers.ModelSerializer):
 class UserDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('email', 'password', 'role', 'name', 'status', 'bio',
+        fields = ('id', 'email', 'password', 'role', 'name', 'status', 'bio',
                   'phone', 'profile_image', 'is_active', 'is_staff',
                   'is_superuser')
 
@@ -47,7 +44,7 @@ class ExhibitionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Exhibition
-        fields = ('id', 'user', 'exhibition_name')
+        fields = '__all__'
 
     def create(self, validated_data):
         user = Exhibition.objects.create(**validated_data)
@@ -56,6 +53,15 @@ class ExhibitionSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         instance.exhibition_name = validated_data.get('exhibition_name',
                                                       instance.exhibition_name)
+
+        instance.Description = validated_data.get('Description',
+                                                  instance.Description)
+
+        instance.Start_date = validated_data.get('Start_date',
+                                                 instance.Start_date)
+        instance.end_date = validated_data.get('end_date', instance.end_date)
+        instance.Running_status = validated_data.get('Running_status',
+                                                     instance.Running_status)
         instance.save()
         return instance
 
@@ -63,10 +69,28 @@ class ExhibitionSerializer(serializers.ModelSerializer):
 class ExhibitionDetail(serializers.ModelSerializer):
     class Meta:
         model = Exhibition
-        fields = ('id', 'exhibition_name')
+        fields = '__all__'
 
 
 class ExhibitFabricators(serializers.ModelSerializer):
     class Meta:
         model = ExhibitFab
+        fields = '__all__'
+
+
+class AvailProdSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AvailProd
+        fields = '__all__'
+
+
+class AvailBrandSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AvailBrand
+        fields = '__all__'
+
+
+class AvailFurniSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AvailFurni
         fields = '__all__'
