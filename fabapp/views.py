@@ -1,10 +1,12 @@
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from cloudinary.templatetags import cloudinary
 from rest_framework.authtoken.models import Token
 from rest_framework.parsers import MultiPartParser, FormParser, FileUploadParser
-from fabapp.models import User, Exhibition, ExhibitFab,AvailBrand,AvailProd,AvailFurni
+from fabapp.models import User, Exhibition, ExhibitFab, AvailBrand, AvailProd, AvailFurni
 from rest_framework import status
 from django.contrib.auth import authenticate
+from rest_framework.parsers import MultiPartParser, FormParser, FileUploadParser
 from rest_framework.response import Response
 from exbrapp.models import Exhibitor
 from exbrapp.serializers import ExhibitorSerializer
@@ -104,7 +106,9 @@ class CreateExhibition(APIView):
         serializer = ExhibitionSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save(user=request.user)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            detail = Exhibition.objects.get(id=serializer.data['id'])
+            ser = ExhibitionDetail(detail, many=False)
+            return Response(ser.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def get(self, request, format=None):
@@ -149,8 +153,6 @@ class CreateExhibition(APIView):
 
 
 class ListExhibhition(APIView):
-
-
     def get(self, request, format=None):
         exhibition = Exhibition.objects.filter(Running_status=True)
         if exhibition is not None:
@@ -219,50 +221,52 @@ class ExhibitionFab(APIView):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
-
 class Addbrand(APIView):
     permission_classes = (IsAdminUser, )
-    def post(self, request,format=None):
+
+    def post(self, request, format=None):
         branding = request.data.get("brandings")
         for elem in branding:
-            br = AvailBrand(user_id=self.request.user.id,branding=elem['branding'])
+            br = AvailBrand(user_id=self.request.user.id,
+                            branding=elem['branding'])
             br.save()
-        return Response("Brands added",status=status.HTTP_201_CREATED)
+        return Response("Brands added", status=status.HTTP_201_CREATED)
 
 
 class Addprod(APIView):
     permission_classes = (IsAdminUser, )
-    def post(self, request,format=None):
+
+    def post(self, request, format=None):
         products = request.data.get("products")
         for elem in products:
-            pr = AvailProd(user_id=self.request.user.id,product=elem['product'])
+            pr = AvailProd(user_id=self.request.user.id,
+                           product=elem['product'])
             pr.save()
-        return Response("Products added",status=status.HTTP_201_CREATED)
-
+        return Response("Products added", status=status.HTTP_201_CREATED)
 
 
 class Addfurni(APIView):
     permission_classes = (IsAdminUser, )
-    def post(self, request,format=None):
+
+    def post(self, request, format=None):
         furniture = request.data.get("furnitures")
         for elem in furniture:
-            fr = AvailFurni(user_id=self.request.user.id,furniture=elem['furniture'])
+            fr = AvailFurni(user_id=self.request.user.id,
+                            furniture=elem['furniture'])
             fr.save()
-        return Response("Furniture added",status=status.HTTP_201_CREATED)
+        return Response("Furniture added", status=status.HTTP_201_CREATED)
+
 
 class listItem(APIView):
-
     def get(self, request, format=None, pk=None):
         branding = AvailBrand.objects.all()
-        serialzier = AvailBrandSerializer(branding,many=True)
+        serialzier = AvailBrandSerializer(branding, many=True)
         products = AvailProd.objects.all()
-        serial = AvailProdSerializer(products,many=True)
+        serial = AvailProdSerializer(products, many=True)
         furniture = AvailFurni.objects.all()
-        ser = AvailFurniSerializer(furniture,many=True)
+        ser = AvailFurniSerializer(furniture, many=True)
         dict = {}
         dict['brandings'] = serialzier.data
         dict['products'] = serial.data
         dict['furnitures'] = ser.data
         return Response(dict)
-
-        

@@ -4,6 +4,8 @@ from rest_framework import serializers
 from drf_extra_fields.fields import Base64ImageField
 from django.contrib.auth.hashers import make_password
 from rest_framework.validators import UniqueValidator
+import cloudinary.uploader
+import cloudinary.api
 
 
 class UserRegisterSerializer(serializers.ModelSerializer):
@@ -38,6 +40,11 @@ class UserDetailSerializer(serializers.ModelSerializer):
                   'phone', 'profile_image', 'is_active', 'is_staff',
                   'is_superuser')
 
+    # def  to_representation ( self , instance ):
+    #     representation =  super (UserDetailSerializer, self ) .to_representation (instance)
+    #     imageURL = cloudinary.utils.cloudinary_url ( ' sample ' , width = 100 , height = 150 , crop = " fill " , quality = " auto: good " )
+    #     representation ['image'] = instance.imagem.url
+    #     return representation
 
 class ExhibitionSerializer(serializers.ModelSerializer):
     exhibition_image = Base64ImageField(use_url=True, required=False)
@@ -48,8 +55,11 @@ class ExhibitionSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     def create(self, validated_data):
-        user = Exhibition.objects.create(**validated_data)
-        return user
+        if validated_data['exhibition_image']:
+            pr_image = validated_data.pop('exhibition_image') 
+        im = cloudinary.uploader.upload(pr_image)
+        usera = Exhibition.objects.create(**validated_data,exhibition_image=im['url'])
+        return usera
 
     def update(self, instance, validated_data):
         instance.exhibition_name = validated_data.get('exhibition_name',

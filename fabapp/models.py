@@ -6,6 +6,7 @@ from django.contrib.auth.base_user import AbstractBaseUser
 from django.contrib.auth.models import PermissionsMixin
 from django.conf import settings
 from phonenumber_field.modelfields import PhoneNumberField
+from cloudinary.models import CloudinaryField
 
 
 class User(AbstractBaseUser, PermissionsMixin):
@@ -46,8 +47,7 @@ class Exhibition(models.Model):
                              null=True,
                              on_delete=models.CASCADE)
     exhibition_name = models.CharField(max_length=350)
-    exhibition_image = models.ImageField(upload_to='Images/',
-                                      default='Images/None/No-img.jpg')
+    exhibition_image = CloudinaryField ('image')
     Desciption = models.CharField(max_length=8000,null=True, blank=True)
     Start_date =  models.DateTimeField('start_date',default=timezone.now, blank=True) 
     end_date =  models.DateTimeField('end_date',default=timezone.now, blank=True)
