@@ -154,7 +154,7 @@ class CreateExhibition(APIView):
 
 class ListExhibhition(APIView):
     def get(self, request, format=None):
-        exhibition = Exhibition.objects.filter(Running_status=True)
+        exhibition = Exhibition.objects.filter()
         if exhibition is not None:
             serializer = ExhibitionDetail(exhibition, many=True)
             return Response(serializer.data)

@@ -22,8 +22,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     name = models.CharField(name="name", max_length=100)
     bio = models.TextField()
     phone = PhoneNumberField(null=False, blank=False, unique=True)
-    profile_image = models.ImageField(upload_to='Images/',
-                                      default='Images/None/No-img.jpg')
+    profile_image = CloudinaryField ('image')
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)

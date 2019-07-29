@@ -58,8 +58,9 @@ class ExhibitionSerializer(serializers.ModelSerializer):
         if validated_data['exhibition_image']:
             pr_image = validated_data.pop('exhibition_image') 
         im = cloudinary.uploader.upload(pr_image)
-        usera = Exhibition.objects.create(**validated_data,exhibition_image=im['url'])
-        return usera
+        
+        user = Exhibition.objects.create(**validated_data,exhibition_image=im['url'])
+        return user
 
     def update(self, instance, validated_data):
         instance.exhibition_name = validated_data.get('exhibition_name',
