@@ -40,6 +40,7 @@ class UserDetailSerializer(serializers.ModelSerializer):
 
 
 class ExhibitionSerializer(serializers.ModelSerializer):
+    exhibition_image = Base64ImageField(use_url=True, required=False)
     user = UserDetailSerializer(many=False, read_only=True)
 
     class Meta:
