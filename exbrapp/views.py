@@ -94,7 +94,7 @@ class CreateBid(APIView):
         user = self.request.user 
         bid = Bid.objects.filter(mine_exhib__user__id=user.id)
         serializer = BidSerializer(bid, many=True)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.data)
 
 
     def post(self,request,format=None,pk=None,exi_pk=None):

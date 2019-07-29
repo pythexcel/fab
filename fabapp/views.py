@@ -130,7 +130,7 @@ class CreateExhibition(APIView):
         if len(exhibitions) > 0:
             return Response(exhibitions)
         else:
-            return Response([], status=status.HTTP_400_BAD_REQUEST)
+            return Response([])
 
     def put(self, request, format=None, pk=None):
         exhibition = Exhibition.objects.get(pk=pk)
@@ -157,7 +157,7 @@ class ListExhibhition(APIView):
             serializer = ExhibitionDetail(exhibition, many=True)
             return Response(serializer.data)
         else:
-            return Response([], status=status.HTTP_400_BAD_REQUEST)
+            return Response("Exhibhition List Empty")
 
 
 # List of all Fabriccatores accesible by admin
@@ -172,7 +172,7 @@ class FabricatorList(APIView):
             serialzier = UserDetailSerializer(user, many=True)
             return Response(serialzier.data)
         else:
-            return Response([], status=status.HTTP_400_BAD_REQUEST)
+            return Response("Fabricator List Empty")
 
 
 # List of all Exhibitors accesible by admin
@@ -189,7 +189,7 @@ class ExhibitorList(APIView):
             serialzier = UserDetailSerializer(user, many=True)
             return Response(serialzier.data)
         else:
-            return Response([], status=status.HTTP_400_BAD_REQUEST)
+            return Response("Exhibitor List Empty")
 
 
 # Ban a particular User from access only for admin
