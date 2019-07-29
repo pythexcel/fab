@@ -34,21 +34,11 @@ class FabricatorPortfolio(APIView):
         arr = []
         flag = 1
         for img_name in images:
-            modified_data = modify_input_for_multiple_files(img_name)
-            #im = cloudinary.upload.upload(modified_data)
-            file_serializer = FabricatorSerializer(data=modified_data)
-            if file_serializer.is_valid():
-                print(file_serializer)
-                # im = cloudinary.uploader.upload(file_serializer.image)
-                file_serializer.save(user=self.request.user)
-                arr.append(file_serializer.data)
-            else:
-                flag = 0
-        if flag == 1:
-            return Response(arr, status=status.HTTP_201_CREATED)
-        else:
-            return Response(arr, status=status.HTTP_400_BAD_REQUEST)
-
+            im = cloudinary.uploader.upload(img_name)
+            md = Portfolio(user_id=self.request.user.id,image=im['url'])
+            md.save()
+        return Response("Portfolio Added", status=status.HTTP_201_CREATED)
+            
     def delete(self, request, pk, format=None):
         exi = Portfolio.objects.get(user=self.request.user, pk=pk)
         exi.delete()
