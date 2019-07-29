@@ -1,3 +1,4 @@
+import uuid
 from django.utils import timezone
 from django.db import models
 from fabapp.managers import UserManager
@@ -8,6 +9,7 @@ from phonenumber_field.modelfields import PhoneNumberField
 
 
 class User(AbstractBaseUser, PermissionsMixin):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     email = models.EmailField(
         unique=True,
         error_messages={
@@ -37,6 +39,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 
 class Exhibition(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.ForeignKey(User,
                              related_name='User',
                              blank=True,
@@ -49,6 +52,7 @@ class Exhibition(models.Model):
     Running_status = models.BooleanField(default=True)
 
 class ExhibitFab(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     exhibition = models.ForeignKey(Exhibition,
                                    blank=True,
                                    null=True,
@@ -59,6 +63,7 @@ class ExhibitFab(models.Model):
                              on_delete=models.CASCADE)
 
 class AvailProd(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.ForeignKey(User,
                              related_name='admin_prod',
                              blank=True,
@@ -69,6 +74,7 @@ class AvailProd(models.Model):
     selected =  models.BooleanField(default=False)
     
 class AvailBrand(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.ForeignKey(User,
                              related_name='admin_brand',
                              blank=True,
@@ -79,6 +85,7 @@ class AvailBrand(models.Model):
     selected =  models.BooleanField(default=False)
 
 class AvailFurni(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.ForeignKey(User,
                              related_name='admin_furni',
                              blank=True,
