@@ -93,9 +93,8 @@ class Userprofile(APIView):
                                             data=request.data,
                                             partial=True)
         if serializer.is_valid():
-
             serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response("Profile Updated")
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -138,12 +137,10 @@ class CreateExhibition(APIView):
 
     def put(self, request, format=None, pk=None):
         exhibition = Exhibition.objects.get(pk=pk)
-        serialzier = ExhibitionSerializer(exhibition,
-                                          data=request.data,
-                                          partial=True)
+        serialzier = ExhibitionSerializer(exhibition,data=request.data,partial=True)
         if serialzier.is_valid():
             serialzier.save()
-            return Response(serialzier.data)
+            return Response("Exhibition updated")
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, format=None, pk=None):

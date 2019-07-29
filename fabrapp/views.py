@@ -11,7 +11,7 @@ from fabrapp.permissions import IsFabricator
 from fabapp.serializers import UserDetailSerializer
 from exbrapp.models import Bid
 from exbrapp.serializers import BidSerializer
-
+import cloudinary.uploader
 
 def modify_input_for_multiple_files(image):
     dict = {}
@@ -35,8 +35,11 @@ class FabricatorPortfolio(APIView):
         flag = 1
         for img_name in images:
             modified_data = modify_input_for_multiple_files(img_name)
+            #im = cloudinary.upload.upload(modified_data)
             file_serializer = FabricatorSerializer(data=modified_data)
             if file_serializer.is_valid():
+                print(file_serializer)
+                # im = cloudinary.uploader.upload(file_serializer.image)
                 file_serializer.save(user=self.request.user)
                 arr.append(file_serializer.data)
             else:

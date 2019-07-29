@@ -1,7 +1,7 @@
 import uuid
 from django.db import models
 from fabapp.models import User, Exhibition
-
+from cloudinary.models import CloudinaryField
 
 class Portfolio(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -10,5 +10,4 @@ class Portfolio(models.Model):
                              blank=True,
                              null=True,
                              on_delete=models.CASCADE)
-    image = models.ImageField(upload_to='Images/',
-                              default='Images/None/No-img.jpg')
+    image = CloudinaryField ('image')
