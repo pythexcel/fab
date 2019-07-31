@@ -11,10 +11,12 @@ import cloudinary.api
 class UserRegisterSerializer(serializers.ModelSerializer):
     profile_image = Base64ImageField(use_url=True, required=False)
     password = serializers.CharField(write_only=True, required=True)
+    class Meta:
 
-    fields = ('email', 'password', 'role', 'name', 'status', 'bio',
-                 'phone', 'profile_image', 'is_active', 'is_staff',
-                 'is_superuser','website_link''avg_rating')
+        model = User
+        fields = ('email', 'password', 'role', 'name', 'status', 'bio',
+                    'phone', 'profile_image', 'is_active', 'is_staff',
+                    'is_superuser','website_link''avg_rating')
 
     def create(self, validated_data):
         if 'profile_image' in validated_data:
@@ -45,11 +47,10 @@ class UserRegisterSerializer(serializers.ModelSerializer):
 
 
 class UserDetailSerializer(serializers.ModelSerializer):
-       class Meta:
-       model = User
-       fields = ('id', 'email', 'role', 'name', 'status', 'bio',
-                 'phone', 'profile_image', 'is_active','website_link','avg_rating')
-
+    class Meta:
+        model = User
+        fields = ('id', 'email', 'role', 'name', 'status', 'bio',
+                            'phone', 'profile_image', 'is_active','website_link','avg_rating')
 
 class ExhibitionSerializer(serializers.ModelSerializer):
     exhibition_image = Base64ImageField(use_url=True, required=False)

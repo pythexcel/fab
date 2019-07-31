@@ -20,7 +20,7 @@ class ExhibitorRequire(APIView):
         if serializer.is_valid():
             serializer.save(user=self.request.user,
                             exhibition_id=exhibhition.id)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response("Request created for exhbhition", status=status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors,
                             status=status.HTTP_400_BAD_REQUEST)
