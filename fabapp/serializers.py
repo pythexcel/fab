@@ -12,11 +12,9 @@ class UserRegisterSerializer(serializers.ModelSerializer):
     profile_image = Base64ImageField(use_url=True, required=False)
     password = serializers.CharField(write_only=True, required=True)
 
-    class Meta:
-        model = User
-        fields = ('email', 'password', 'role', 'name', 'status', 'bio',
-                  'phone', 'profile_image', 'is_active', 'is_staff',
-                  'is_superuser')
+    fields = ('email', 'password', 'role', 'name', 'status', 'bio',
+                 'phone', 'profile_image', 'is_active', 'is_staff',
+                 'is_superuser','website_link''avg_rating')
 
     def create(self, validated_data):
         if 'profile_image' in validated_data:
@@ -47,11 +45,10 @@ class UserRegisterSerializer(serializers.ModelSerializer):
 
 
 class UserDetailSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ('id', 'email', 'password', 'role', 'name', 'status', 'bio',
-                  'phone', 'profile_image', 'is_active', 'is_staff',
-                  'is_superuser')
+       class Meta:
+       model = User
+       fields = ('id', 'email', 'role', 'name', 'status', 'bio',
+                 'phone', 'profile_image', 'is_active','website_link','avg_rating')
 
 
 class ExhibitionSerializer(serializers.ModelSerializer):
@@ -86,8 +83,8 @@ class ExhibitionSerializer(serializers.ModelSerializer):
             instance.exhibition_name = validated_data.get('exhibition_name',
                                                       instance.exhibition_name)
 
-            instance.Description = validated_data.get('Desciption',
-                                                    instance.Desciption)
+            instance.Description = validated_data.get('Description',
+                                                   instance.Description)
 
             instance.Start_date = validated_data.get('Start_date',
                                                     instance.Start_date)

@@ -87,11 +87,8 @@ class Userprofile(APIView):
         ])
 
     def put(self, request, pk=None):
-
         user = User.objects.get(id=pk)
-        serializer = UserRegisterSerializer(user,
-                                            data=request.data,
-                                            partial=True)
+        serializer = UserRegisterSerializer(user,data=request.data,partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response("Profile Updated")
@@ -107,7 +104,7 @@ class CreateExhibition(APIView):
             serializer.save(user=request.user)
             detail = Exhibition.objects.get(id=serializer.data['id'])
             ser = ExhibitionDetail(detail, many=False)
-            return Response(ser.data, status=status.HTTP_201_CREATED)
+            return Response("Exhibition Created", status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def get(self, request, format=None):
@@ -146,7 +143,7 @@ class CreateExhibition(APIView):
     def delete(self, request, format=None, pk=None):
         exhibition = Exhibition.objects.get(pk=pk)
         exhibition.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response("Exhibition Deleted",status=status.HTTP_204_NO_CONTENT)
 
 
 class ListExhibhition(APIView):

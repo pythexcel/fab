@@ -28,6 +28,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_superuser = models.BooleanField(default=False)
     cron_review = models.BooleanField(default=False)
     avg_rating = models.IntegerField(null=True,blank=True)
+    website_link = models.URLField(max_length=350, null=True, blank=True)
 
     objects = UserManager()
 
@@ -47,10 +48,11 @@ class Exhibition(models.Model):
                              on_delete=models.CASCADE)
     exhibition_name = models.CharField(max_length=350)
     exhibition_image = CloudinaryField ('image')
-    Desciption = models.CharField(max_length=8000,null=True, blank=True)
+    Description = models.CharField(max_length=8000,null=True, blank=True)
     Start_date =  models.DateTimeField('start_date',default=timezone.now, blank=True) 
     end_date =  models.DateTimeField('end_date',default=timezone.now, blank=True)
     Running_status = models.BooleanField(default=True)
+    website_link = models.URLField(max_length=350, null=True, blank=True)
 
 class ExhibitFab(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
