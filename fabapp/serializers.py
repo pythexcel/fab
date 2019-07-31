@@ -16,7 +16,7 @@ class UserRegisterSerializer(serializers.ModelSerializer):
         model = User
         fields = ('email', 'password', 'role', 'name', 'status', 'bio',
                     'phone', 'profile_image', 'is_active', 'is_staff',
-                    'is_superuser','website_link''avg_rating')
+                    'is_superuser','website_link','avg_rating')
 
     def create(self, validated_data):
         if 'profile_image' in validated_data:
