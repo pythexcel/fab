@@ -20,7 +20,7 @@ def modify_input_for_multiple_files(image):
 
 
 class FabricatorPortfolio(APIView):
-    parser_classes = (MultiPartParser, FormParser, FileUploadParser)
+    # parser_classes = (MultiPartParser, FormParser, FileUploadParser)
     permission_classes = (IsAuthenticated, IsFabricator)
 
     def get(self, request):
@@ -29,12 +29,11 @@ class FabricatorPortfolio(APIView):
         return Response(serializer.data)
 
     def post(self, request, *args, **kwargs):
-        images = dict((request.data).lists())['image']
-        print(images)
-        arr = []
+        images = request.data['images']
         flag = 1
         for img_name in images:
-            im = cloudinary.uploader.upload(img_name)
+            up_image = "data:image/gif;base64,"+img_name['image']
+            im = cloudinary.uploader.upload(up_image)
             md = Portfolio(user_id=self.request.user.id,image=im['url'])
             md.save()
         return Response("Portfolio Added", status=status.HTTP_201_CREATED)
