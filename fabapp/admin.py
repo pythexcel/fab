@@ -38,8 +38,7 @@ class ExhibitFabAdmin(admin.ModelAdmin):
     get_name.admin_order_field  = 'exhibition'  
     get_name.short_description = 'exhibition_name'  
 
-class BidAdmin(admin.ModelAdmin):
-    list_display = ('fabs_user','mine_exhib','work_status','complete_status','response_status')
+
 
 admin.site.site_url = None
 
@@ -49,7 +48,5 @@ admin.site.register(ExhibitFab,ExhibitFabAdmin)
 admin.site.register(AvailBrand, BrandAdmin)
 admin.site.register(AvailFurni, FurniAdmin)
 admin.site.register(AvailProd, ProdAdmin)
-admin.site.register(Bid,BidAdmin)
-admin.site.register(Exhibitor)
 
 admin.site.site_header = 'Fabapp Administration'
