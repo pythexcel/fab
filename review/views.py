@@ -3,6 +3,7 @@ from rest_framework.views import APIView
 from rest_framework import status
 from review.models import Review
 from fabapp.models import User
+from exbrapp.models import Bid
 from fabapp.serializers import UserDetailSerializer
 from review.serializers import ReviewSeializer
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
@@ -26,6 +27,8 @@ class UserReviewDeails(APIView):
         rating = request.data.get("rating")
         user_one = self.request.user
         user_two = User.objects.get(id=pk)
+        # bid = Bid.objects.filter()
+
         reviewed = Review.objects.filter(user_id=user_one.id,rated_user_id=user_two.id)
         if len(reviewed) == 0:
             review = Review(user_id=user_one.id,rated_user_id=user_two.id,comment=comment,rating=rating)
@@ -33,7 +36,7 @@ class UserReviewDeails(APIView):
             serializer = ReviewSeializer(review,many=False)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
-            return Response("you already reviewed this User", status=status.HTTP_201_CREATED)
+            return Response("you already have reviewed this User", status=status.HTTP_201_CREATED)
 
 
         

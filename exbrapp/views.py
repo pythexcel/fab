@@ -58,7 +58,7 @@ class ExhibhitDetails(APIView):
     def delete(self, request, pk, format=None):
         exi = self.get_object(pk)
         exi.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response("Exhibtion Request Deleted",status=status.HTTP_204_NO_CONTENT)
 
 
 class Fabricatorslist(APIView):

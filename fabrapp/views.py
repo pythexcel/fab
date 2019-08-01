@@ -65,3 +65,14 @@ class BidResponse(APIView):
 
 
 
+class BidTaskCompleted(APIView):
+    def put(self,request,format=None,pk=None):
+        bid = Bid.objects.get(id=pk)
+        print(bid)
+        if bid.work_status is True:
+            bid.complete_status = True
+            bid.save()
+            serial = BidSerializer(bid,many=False)
+            return Response(serial.data)
+        else:
+            return Response("This Bid work is not yet started",status=status.HTTP_400_BAD_REQUEST)

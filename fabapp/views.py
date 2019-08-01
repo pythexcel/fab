@@ -148,7 +148,7 @@ class CreateExhibition(APIView):
 
 class ListExhibhition(APIView):
     def get(self, request, format=None):
-        exhibition = Exhibition.objects.filter()
+        exhibition = Exhibition.objects.all()
         if exhibition is not None:
             serializer = ExhibitionDetail(exhibition, many=True)
             return Response(serializer.data)
@@ -162,7 +162,7 @@ class FabricatorList(APIView):
 
     def get(self, request, format=None):
 
-        user = User.objects.filter(role='fabricator', is_active=True)
+        user = User.objects.filter(role='fabricator')
 
         if len(user) > 0:
             serialzier = UserDetailSerializer(user, many=True)

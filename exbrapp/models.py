@@ -71,6 +71,7 @@ class Bid(models.Model):
                                  related_name='mine_exhib',
                                  on_delete=models.CASCADE)
     work_status = models.BooleanField(default=False)
+    complete_status = models.BooleanField(default=False)
     response_status = models.BooleanField(default=False)
     comment = models.CharField(max_length=8000, null=True, blank=True)
     total_price = models.FloatField(null=True, blank=True, default=None)
