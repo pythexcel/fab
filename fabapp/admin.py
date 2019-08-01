@@ -1,7 +1,8 @@
 from django.contrib import admin
 from fabapp.models import Exhibition, ExhibitFab, AvailBrand, AvailFurni, AvailProd, User, Exhibition
 from exbrapp.models import Bid,Exhibitor
-
+from django.forms import ModelChoiceField
+from django import forms
 
 class ExhibitionAdmin(admin.ModelAdmin):
     list_display = ('exhibition_name', 'Start_date')
@@ -27,6 +28,9 @@ class FurniAdmin(admin.ModelAdmin):
 
 class ExhibitFabAdmin(admin.ModelAdmin):
     model = ExhibitFab
+    fields = ('user','exhibition')
+    raw_id_fields = ('exhibition',)
+
     list_display = ('user', 'get_name')
 
     def get_name(self, obj):
@@ -38,6 +42,7 @@ class BidAdmin(admin.ModelAdmin):
     list_display = ('fabs_user','mine_exhib','work_status','complete_status','response_status')
 
 admin.site.site_url = None
+
 admin.site.register(User, UserAdmin)
 admin.site.register(Exhibition, ExhibitionAdmin)
 admin.site.register(ExhibitFab,ExhibitFabAdmin)
