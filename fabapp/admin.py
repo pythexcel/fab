@@ -37,7 +37,7 @@ class ExhibitFabAdmin(admin.ModelAdmin):
 class BidAdmin(admin.ModelAdmin):
     list_display = ('fabs_user','mine_exhib','work_status','complete_status','response_status')
 
-
+admin.site.site_url = None
 admin.site.register(User, UserAdmin)
 admin.site.register(Exhibition, ExhibitionAdmin)
 admin.site.register(ExhibitFab,ExhibitFabAdmin)
