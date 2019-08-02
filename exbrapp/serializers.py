@@ -33,7 +33,6 @@ class ExhibitorSerializer(serializers.ModelSerializer):
     furnitures = FurnituredDetail(many=True)
     brandings = BrandingDetail(many=True)
     products = ProductDetail(many=True)
-    user = UserDetailSerializer(many=False, read_only=True)
     exhibition = ExhibitionDetail(many=False, read_only=True)
 
     class Meta:

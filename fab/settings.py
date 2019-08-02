@@ -1,5 +1,6 @@
 import os
 from decouple import config
+import cloudinary
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -14,14 +15,21 @@ SECRET_KEY = '%=r3#altd4m)_%_y7)y$xu+1bb&7ms!kd2h@vb-j*6jw38kkx6'
 DEBUG = True 
 
 
+cloudinary.config(cloud_name=config('cloud_name'),
+                  api_key=config('api_key'),
+                  api_secret=config('api_secret'))
+
+
 ALLOWED_HOSTS = ["*"]
 CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_CREDENTIALS = True
 
 # Application definition
 
 INSTALLED_APPS = [
     'rest_framework.authtoken',
     'rest_framework',
+    'cloudinary',
     'fabapp.apps.FabappConfig',
     'exbrapp.apps.ExbrappConfig',
     'fabrapp.apps.FabrappConfig',
@@ -58,6 +66,7 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -131,7 +140,7 @@ USE_I18N = True
 
 USE_L10N = True
 
-USE_TZ = False
+USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.2/howto/static-files/

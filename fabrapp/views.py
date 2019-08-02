@@ -11,7 +11,7 @@ from fabrapp.permissions import IsFabricator
 from fabapp.serializers import UserDetailSerializer
 from exbrapp.models import Bid
 from exbrapp.serializers import BidSerializer
-
+import cloudinary.uploader
 
 def modify_input_for_multiple_files(image):
     dict = {}
@@ -20,7 +20,7 @@ def modify_input_for_multiple_files(image):
 
 
 class FabricatorPortfolio(APIView):
-    parser_classes = (MultiPartParser, FormParser, FileUploadParser)
+    # parser_classes = (MultiPartParser, FormParser, FileUploadParser)
     permission_classes = (IsAuthenticated, IsFabricator)
 
     def get(self, request):
@@ -29,23 +29,15 @@ class FabricatorPortfolio(APIView):
         return Response(serializer.data)
 
     def post(self, request, *args, **kwargs):
-        images = dict((request.data).lists())['image']
-        print(images)
-        arr = []
+        images = request.data['images']
         flag = 1
         for img_name in images:
-            modified_data = modify_input_for_multiple_files(img_name)
-            file_serializer = FabricatorSerializer(data=modified_data)
-            if file_serializer.is_valid():
-                file_serializer.save(user=self.request.user)
-                arr.append(file_serializer.data)
-            else:
-                flag = 0
-        if flag == 1:
-            return Response(arr, status=status.HTTP_201_CREATED)
-        else:
-            return Response(arr, status=status.HTTP_400_BAD_REQUEST)
-
+            up_image = "data:image/gif;base64,"+img_name['image']
+            im = cloudinary.uploader.upload(up_image)
+            md = Portfolio(user_id=self.request.user.id,image=im['url'])
+            md.save()
+        return Response("Portfolio Added", status=status.HTTP_201_CREATED)
+            
     def delete(self, request, pk, format=None):
         exi = Portfolio.objects.get(user=self.request.user, pk=pk)
         exi.delete()
@@ -73,3 +65,14 @@ class BidResponse(APIView):
 
 
 
+class BidTaskCompleted(APIView):
+    def put(self,request,format=None,pk=None):
+        bid = Bid.objects.get(id=pk)
+        print(bid)
+        if bid.work_status is True:
+            bid.complete_status = True
+            bid.save()
+            serial = BidSerializer(bid,many=False)
+            return Response(serial.data)
+        else:
+            return Response("This Bid work is not yet started",status=status.HTTP_400_BAD_REQUEST)

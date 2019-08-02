@@ -4,7 +4,7 @@ from review import views
 
 urlpatterns = [
     url('reviews', views.UserReviewDeails.as_view()),
-    url('review/<int:pk>', views.UserReviewDeails.as_view())
+    url('review/<uuid:pk>', views.UserReviewDeails.as_view())
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns, allowed=['json', 'html'])

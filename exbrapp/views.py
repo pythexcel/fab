@@ -20,7 +20,7 @@ class ExhibitorRequire(APIView):
         if serializer.is_valid():
             serializer.save(user=self.request.user,
                             exhibition_id=exhibhition.id)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response("Request created for exhbhition", status=status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors,
                             status=status.HTTP_400_BAD_REQUEST)
@@ -58,7 +58,7 @@ class ExhibhitDetails(APIView):
     def delete(self, request, pk, format=None):
         exi = self.get_object(pk)
         exi.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response("Exhibtion Request Deleted",status=status.HTTP_204_NO_CONTENT)
 
 
 class Fabricatorslist(APIView):
@@ -94,7 +94,7 @@ class CreateBid(APIView):
         user = self.request.user 
         bid = Bid.objects.filter(mine_exhib__user__id=user.id)
         serializer = BidSerializer(bid, many=True)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.data)
 
 
     def post(self,request,format=None,pk=None,exi_pk=None):

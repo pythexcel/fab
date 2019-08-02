@@ -1,8 +1,10 @@
+import uuid
 from django.db import models
 from fabapp.models import User, Exhibition
 
 
 class Exhibitor(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     exhibition = models.ForeignKey(Exhibition,
                                    related_name='exhibiton',
                                    blank=True,
@@ -23,6 +25,7 @@ class Exhibitor(models.Model):
 
 
 class ProductExhibitorDetail(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     products = models.ForeignKey(Exhibitor,
                                  related_name='products',
                                  on_delete=models.CASCADE)
@@ -34,6 +37,7 @@ class ProductExhibitorDetail(models.Model):
 
 
 class BrandingExhibitorDetail(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     brandings = models.ForeignKey(Exhibitor,
                                   related_name='brandings',
                                   on_delete=models.CASCADE)
@@ -46,6 +50,7 @@ class BrandingExhibitorDetail(models.Model):
 
 
 class FurnitureExhibitorDetail(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     furnitures = models.ForeignKey(Exhibitor,
                                    related_name='furnitures',
                                    on_delete=models.CASCADE)
@@ -58,6 +63,7 @@ class FurnitureExhibitorDetail(models.Model):
 
 
 class Bid(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     fabs_user = models.ForeignKey(User,
                                  related_name='fabs_user',
                                  on_delete=models.CASCADE)
@@ -65,6 +71,7 @@ class Bid(models.Model):
                                  related_name='mine_exhib',
                                  on_delete=models.CASCADE)
     work_status = models.BooleanField(default=False)
+    complete_status = models.BooleanField(default=False)
     response_status = models.BooleanField(default=False)
     comment = models.CharField(max_length=8000, null=True, blank=True)
     total_price = models.FloatField(null=True, blank=True, default=None)

@@ -1,3 +1,4 @@
+import uuid
 from django.utils import timezone
 from django.db import models
 from fabapp.managers import UserManager
@@ -5,9 +6,11 @@ from django.contrib.auth.base_user import AbstractBaseUser
 from django.contrib.auth.models import PermissionsMixin
 from django.conf import settings
 from phonenumber_field.modelfields import PhoneNumberField
+from cloudinary.models import CloudinaryField
 
 
 class User(AbstractBaseUser, PermissionsMixin):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     email = models.EmailField(
         unique=True,
         error_messages={
@@ -19,13 +22,13 @@ class User(AbstractBaseUser, PermissionsMixin):
     name = models.CharField(name="name", max_length=100)
     bio = models.TextField()
     phone = PhoneNumberField(null=False, blank=False, unique=True)
-    profile_image = models.ImageField(upload_to='Images/',
-                                      default='Images/None/No-img.jpg')
+    profile_image = CloudinaryField ('image')
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
     cron_review = models.BooleanField(default=False)
     avg_rating = models.IntegerField(null=True,blank=True)
+    website_link = models.URLField(max_length=350, null=True, blank=True)
 
     objects = UserManager()
 
@@ -37,18 +40,22 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 
 class Exhibition(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.ForeignKey(User,
                              related_name='User',
                              blank=True,
                              null=True,
                              on_delete=models.CASCADE)
     exhibition_name = models.CharField(max_length=350)
-    Desciption = models.CharField(max_length=8000,null=True, blank=True)
+    exhibition_image = CloudinaryField ('image')
+    Description = models.CharField(max_length=8000,null=True, blank=True)
     Start_date =  models.DateTimeField('start_date',default=timezone.now, blank=True) 
     end_date =  models.DateTimeField('end_date',default=timezone.now, blank=True)
     Running_status = models.BooleanField(default=True)
+    website_link = models.URLField(max_length=350, null=True, blank=True)
 
 class ExhibitFab(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     exhibition = models.ForeignKey(Exhibition,
                                    blank=True,
                                    null=True,
@@ -59,6 +66,7 @@ class ExhibitFab(models.Model):
                              on_delete=models.CASCADE)
 
 class AvailProd(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.ForeignKey(User,
                              related_name='admin_prod',
                              blank=True,
@@ -69,6 +77,7 @@ class AvailProd(models.Model):
     selected =  models.BooleanField(default=False)
     
 class AvailBrand(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.ForeignKey(User,
                              related_name='admin_brand',
                              blank=True,
@@ -79,6 +88,7 @@ class AvailBrand(models.Model):
     selected =  models.BooleanField(default=False)
 
 class AvailFurni(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.ForeignKey(User,
                              related_name='admin_furni',
                              blank=True,
