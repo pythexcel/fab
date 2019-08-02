@@ -5,32 +5,35 @@ from django.forms import ModelChoiceField
 from django import forms
 
 class ExhibitionAdmin(admin.ModelAdmin):
-    list_display = ('exhibition_name', 'Start_date')
-    list_filter = ('Start_date', )
+    list_display = ('exhibition_name', 'Start_date','end_date')
+    list_filter = ('Start_date','end_date' )
+    search_fields = ('exhibition_name',)
+
 
 
 class UserAdmin(admin.ModelAdmin):
     list_display = ('email', 'name', 'role', 'phone', 'is_active')
     list_filter = ('role', )
+    search_fields = ('email', 'name', 'phone', )
 
 
 class ProdAdmin(admin.ModelAdmin):
     list_display = ('product', )
+    search_fields = ('product',)
 
 
 class BrandAdmin(admin.ModelAdmin):
     list_display = ('branding', )
-
+    search_fields = ('branding',)
 
 class FurniAdmin(admin.ModelAdmin):
     list_display = ('furniture', )
-
+    search_fields = ('furniture',)
 
 class ExhibitFabAdmin(admin.ModelAdmin):
     model = ExhibitFab
     fields = ('user','exhibition')
-    raw_id_fields = ('exhibition',)
-
+    raw_id_fields = ('exhibition','user')
     list_display = ('user', 'get_name')
 
     def get_name(self, obj):
@@ -50,3 +53,5 @@ admin.site.register(AvailFurni, FurniAdmin)
 admin.site.register(AvailProd, ProdAdmin)
 
 admin.site.site_header = 'Fabapp Administration'
+
+
