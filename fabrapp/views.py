@@ -41,7 +41,7 @@ class FabricatorPortfolio(APIView):
     def delete(self, request, pk, format=None):
         exi = Portfolio.objects.get(user=self.request.user, pk=pk)
         exi.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response("Portfolio Image Deleted",status=status.HTTP_204_NO_CONTENT)
 
 class BidResponse(APIView):
     def get(self,request,format=None):
