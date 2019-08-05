@@ -77,6 +77,16 @@ class Userprofile(APIView):
         ser = UserDetailSerializer(request.user)
         exhibitor = Exhibitor.objects.filter(user=self.request.user)
         serializer = ExhibitorSerializer(exhibitor, many=True)
+        total = serializer.data
+        for elem in total:
+            ua = []
+            bs = Bid.objects.filter(mine_exhib_id=elem['id'])
+            bsr = BidSerializer(bs,many=True)
+            for dub in bsr.data:
+                ua.append(dub["fabs_user"])
+          
+            elem["user"] = ua
+        
         portfolio = Portfolio.objects.filter(user=self.request.user)
         serial = FabricatorSerializer(portfolio, many=True)
         exi_bid = Bid.objects.filter(mine_exhib__user__id=request.user.id)
@@ -86,7 +96,7 @@ class Userprofile(APIView):
 
         return Response([
             ser.data, {
-                "exhbhition_request": serializer.data
+                "exhbhition_request": total
             }, {
                 "Portfolio": serial.data
             },{
