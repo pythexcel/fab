@@ -17,7 +17,8 @@ from fabapp.serializers import (UserRegisterSerializer, UserDetailSerializer,
                                 ExhibitionSerializer, ExhibitFabricators,
                                 ExhibitionDetail, AvailBrandSerializer,
                                 AvailFurniSerializer, AvailProdSerializer)
-
+from exbrapp.models import Bid
+from exbrapp.serializers import BidSerializer
 
 class Test(APIView):
     def get(self, requset):
@@ -78,11 +79,20 @@ class Userprofile(APIView):
         serializer = ExhibitorSerializer(exhibitor, many=True)
         portfolio = Portfolio.objects.filter(user=self.request.user)
         serial = FabricatorSerializer(portfolio, many=True)
+        exi_bid = Bid.objects.filter(mine_exhib__user__id=user.id)
+        exi_bid_serial = BidSerializer(exi_bid,many=True)
+        fab_bid = Bid.objects.filter(fabs_user_id=user.id,work_status=False)
+        fab_bid_serial = BidSerializer(bids,many=True)
+
         return Response([
             ser.data, {
                 "exhbhition_request": serializer.data
             }, {
                 "Portfolio": serial.data
+            },{
+                "Exhibitor_bid_request": exi_bid_serial.data
+            }, {
+                "Fabricator_bid_request": fab_bid_serial.data
             }
         ])
 
@@ -143,7 +153,7 @@ class CreateExhibition(APIView):
     def delete(self, request, format=None, pk=None):
         exhibition = Exhibition.objects.get(pk=pk)
         exhibition.delete()
-        return Response("Exhibition Deleted",status=status.HTTP_204_NO_CONTENT)
+        return Response({"Message":"Exhibition deleted"})
 
 
 class ListExhibhition(APIView):

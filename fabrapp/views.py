@@ -47,7 +47,6 @@ class BidResponse(APIView):
     def get(self,request,format=None):
         user = self.request.user
         print(user.id)
-
         bids = Bid.objects.filter(fabs_user_id=user.id,work_status=False)
         serializer = BidSerializer(bids,many=True)
         return Response(serializer.data)
