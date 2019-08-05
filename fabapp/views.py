@@ -80,13 +80,19 @@ class Userprofile(APIView):
         total = serializer.data
         for elem in total:
             ua = []
-            bs = Bid.objects.filter(mine_exhib_id=elem['id'])
-            bsr = BidSerializer(bs,many=True)
-            for dub in bsr.data:
-                ua.append(dub["fabs_user"])
-          
+            es = Bid.objects.filter(mine_exhib_id=elem['id'],work_status=True)
+            if len(es) > 0:
+                esr = BidSerializer(es,many=True)
+                for delta in esr.data:
+                    ua.append(delta["fabs_user"])
+            else:
+                bs = Bid.objects.filter(mine_exhib_id=elem['id'])
+                bsr = BidSerializer(bs,many=True)
+                for dub in bsr.data:
+                    ua.append(dub["fabs_user"])
+            
             elem["FAB_USER"] = ua
-        
+            
         portfolio = Portfolio.objects.filter(user=self.request.user)
         serial = FabricatorSerializer(portfolio, many=True)
         exi_bid = Bid.objects.filter(mine_exhib__user__id=request.user.id)
