@@ -20,6 +20,7 @@ class UserAdmin(admin.ModelAdmin):
         'phone',
     )
 
+
 class ProdAdmin(admin.ModelAdmin):
     list_display = ('product', )
     search_fields = ('product', )

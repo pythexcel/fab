@@ -79,10 +79,10 @@ class Userprofile(APIView):
         serializer = ExhibitorSerializer(exhibitor, many=True)
         portfolio = Portfolio.objects.filter(user=self.request.user)
         serial = FabricatorSerializer(portfolio, many=True)
-        exi_bid = Bid.objects.filter(mine_exhib__user__id=user.id)
+        exi_bid = Bid.objects.filter(mine_exhib__user__id=request.user.id)
         exi_bid_serial = BidSerializer(exi_bid,many=True)
-        fab_bid = Bid.objects.filter(fabs_user_id=user.id,work_status=False)
-        fab_bid_serial = BidSerializer(bids,many=True)
+        fab_bid = Bid.objects.filter(fabs_user_id=request.user.id,work_status=False)
+        fab_bid_serial = BidSerializer(fab_bid,many=True)
 
         return Response([
             ser.data, {

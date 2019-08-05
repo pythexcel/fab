@@ -22,12 +22,12 @@ class User(AbstractBaseUser, PermissionsMixin):
     name = models.CharField(name="name", max_length=100)
     bio = models.TextField()
     phone = PhoneNumberField(null=False, blank=False, unique=True)
-    profile_image = CloudinaryField ('image')
+    profile_image = CloudinaryField('image')
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
     cron_review = models.BooleanField(default=False)
-    avg_rating = models.IntegerField(null=True,blank=True)
+    avg_rating = models.IntegerField(null=True, blank=True)
     website_link = models.URLField(max_length=350, null=True, blank=True)
 
     objects = UserManager()
@@ -47,12 +47,17 @@ class Exhibition(models.Model):
                              null=True,
                              on_delete=models.CASCADE)
     exhibition_name = models.CharField(max_length=350)
-    exhibition_image = CloudinaryField ('image')
-    Description = models.CharField(max_length=8000,null=True, blank=True)
-    Start_date =  models.DateTimeField('start_date',default=timezone.now, blank=True) 
-    end_date =  models.DateTimeField('end_date',default=timezone.now, blank=True)
+    exhibition_image = CloudinaryField('image')
+    Description = models.CharField(max_length=8000, null=True, blank=True)
+    Start_date = models.DateTimeField('start_date',
+                                      default=timezone.now,
+                                      blank=True)
+    end_date = models.DateTimeField('end_date',
+                                    default=timezone.now,
+                                    blank=True)
     Running_status = models.BooleanField(default=True)
     website_link = models.URLField(max_length=350, null=True, blank=True)
+
 
 class ExhibitFab(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -64,10 +69,9 @@ class ExhibitFab(models.Model):
                              blank=True,
                              null=True,
                              on_delete=models.CASCADE)
+
     class Meta:
-        unique_together = (('exhibition', 'user'),)
-
-
+        unique_together = (('exhibition', 'user'), )
 
 
 class AvailProd(models.Model):
@@ -77,10 +81,11 @@ class AvailProd(models.Model):
                              blank=True,
                              null=True,
                              on_delete=models.CASCADE)
-    
+
     product = models.TextField()
-    selected =  models.BooleanField(default=False)
-    
+    selected = models.BooleanField(default=False)
+
+
 class AvailBrand(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.ForeignKey(User,
@@ -88,9 +93,10 @@ class AvailBrand(models.Model):
                              blank=True,
                              null=True,
                              on_delete=models.CASCADE)
-    
+
     branding = models.TextField()
-    selected =  models.BooleanField(default=False)
+    selected = models.BooleanField(default=False)
+
 
 class AvailFurni(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -100,7 +106,4 @@ class AvailFurni(models.Model):
                              null=True,
                              on_delete=models.CASCADE)
     furniture = models.TextField()
-    selected =  models.BooleanField(default=False)
-                         
-    
-    
+    selected = models.BooleanField(default=False)
