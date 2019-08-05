@@ -64,6 +64,11 @@ class ExhibitFab(models.Model):
                              blank=True,
                              null=True,
                              on_delete=models.CASCADE)
+    class Meta:
+        unique_together = (('exhibition', 'user'),)
+
+
+
 
 class AvailProd(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)

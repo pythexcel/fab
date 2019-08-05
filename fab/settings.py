@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     'fabrapp.apps.FabrappConfig',
     'review.apps.ReviewConfig',
     'corsheaders',
+    "fcm_django",
     "django_apscheduler",
     'phonenumber_field',
     'django.contrib.admin',
