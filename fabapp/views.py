@@ -85,7 +85,7 @@ class Userprofile(APIView):
             for dub in bsr.data:
                 ua.append(dub["fabs_user"])
           
-            elem["user"] = ua
+            elem["FAB_USER"] = ua
         
         portfolio = Portfolio.objects.filter(user=self.request.user)
         serial = FabricatorSerializer(portfolio, many=True)
