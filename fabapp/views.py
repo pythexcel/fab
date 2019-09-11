@@ -35,16 +35,15 @@ class UserRegister(APIView):
                 token = Token.objects.create(user=user)
                 json = serializer.data
                 json['token'] = token.key
+                role = json['role']
                 email = str(user)
                 return Response({
                     "token": token.key,
+                    "Role": role,
                     "error": False
-                },
-                                status=status.HTTP_201_CREATED)
+                },status=status.HTTP_201_CREATED)
         else:
-
             data = {"error": True, "errors": serializer.errors}
-
             return Response(data, status=status.HTTP_400_BAD_REQUEST)
 
 
