@@ -35,7 +35,6 @@ INSTALLED_APPS = [
     'fabrapp.apps.FabrappConfig',
     'review.apps.ReviewConfig',
     'corsheaders',
-    "fcm_django",
     "django_apscheduler",
     'phonenumber_field',
     'django.contrib.admin',
@@ -102,7 +101,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'fab',
         'USER': 'root',
-        'PASSWORD': 'java@123',  #java@123
+        'PASSWORD': '123',  #java@123
         'HOST': 'localhost',
         'PORT': '',
     }
