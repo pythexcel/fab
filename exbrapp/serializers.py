@@ -67,6 +67,8 @@ class ExhibitorSerializer(serializers.ModelSerializer):
         instance.extra = validated_data.get('extra', instance.extra)
         instance.website_link = validated_data.get('website_link',
                                                    instance.website_link)
+        instance.products = validated_data.get('products',
+                                                  instance.products)                                           
         instance.save()
         
         if 'furnitures' in validated_data:
