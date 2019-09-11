@@ -1,4 +1,4 @@
-from exbrapp.models import (Exhibitor, ProductExhibitorDetail,
+from exbrapp.models import (Exhibitor,
                             BrandingExhibitorDetail, FurnitureExhibitorDetail,Bid)
 from rest_framework import serializers
 from fabapp.serializers import UserDetailSerializer, ExhibitionDetail
@@ -21,20 +21,20 @@ class BrandingDetail(serializers.ModelSerializer):
         fields = ('id', 'branding','quantity')
 
 
-class ProductDetail(serializers.ModelSerializer):
-    id = serializers.IntegerField(required=False)
+# class ProductDetail(serializers.ModelSerializer):
+#     id = serializers.IntegerField(required=False)
 
-    class Meta:
-        model = ProductExhibitorDetail
-        fields = ('id', 'product','quantity')
+#     class Meta:
+#         model = ProductExhibitorDetail
+#         fields = ('id', 'product','quantity')
 
 
 class ExhibitorSerializer(serializers.ModelSerializer):
     furnitures = FurnituredDetail(many=True)
     brandings = BrandingDetail(many=True)
-    products = ProductDetail(many=True)
+    # products = ProductDetail()
+    # products = serializers.StringRelatedField(many=False)
     exhibition = ExhibitionDetail(many=False, read_only=True)
-
     class Meta:
         model = Exhibitor
         fields = ('id', 'exhibition', 'size', 'stall_no', 'color_theme',
@@ -42,9 +42,11 @@ class ExhibitorSerializer(serializers.ModelSerializer):
                   'products', 'user', 'website_link')
 
     def create(self, validated_data):
+        print("isme aya bhi h")
+        print(validated_data)
         furniture_data = validated_data.pop('furnitures')
         branding_data = validated_data.pop('brandings')
-        product_data = validated_data.pop('products')
+        # product_data = validated_data.pop('products')
         exi = Exhibitor.objects.create(**validated_data)
         for data in furniture_data:
             print(data)
@@ -52,9 +54,7 @@ class ExhibitorSerializer(serializers.ModelSerializer):
         for elem in branding_data:
             print(elem)
             BrandingExhibitorDetail.objects.create(brandings=exi, **elem)
-        for detail in product_data:
-            print(detail)
-            ProductExhibitorDetail.objects.create(products=exi, **detail)
+        # ProductExhibitorDetail.objects.create(products=exi, **product_data)
         return exi
 
     def update(self, instance, validated_data):
@@ -97,25 +97,25 @@ class ExhibitorSerializer(serializers.ModelSerializer):
                     brd_data = BrandingExhibitorDetail.objects.create(
                         **elem, brandings=instance)
         
-        if 'products' in validated_data:
-            product_data = validated_data.get('products')
-            for detail in product_data:
-                detail_id = detail.get('id', None)
+        # if 'products' in validated_data:
+        #     product_data = validated_data.get('products')
+            
+        #     detail_id = product_data.get('id', None)
+            
+        #     if detail_id:
                 
-                if detail_id:
+        #         pro_data = ProductExhibitorDetail.objects.get(
+        #             id=detail_id, products=instance)
+        #         print(pro_data)  
+        #         pro_data.product = detail.get('product', pro_data.product)
+        #         pro_data.quantity = detail.get('quantity', pro_data.quantity)
+        #         print(pro_data.product)
+                
+        #         pro_data.save()
+        #     else:
+        #         pro_data = ProductExhibitorDetail.objects.create(
+        #             **detail, products=instance)
                     
-                    pro_data = ProductExhibitorDetail.objects.get(
-                        id=detail_id, products=instance)
-                    print(pro_data)  
-                    pro_data.product = detail.get('product', pro_data.product)
-                    pro_data.quantity = detail.get('quantity', pro_data.quantity)
-                    print(pro_data.product)
-                   
-                    pro_data.save()
-                else:
-                    pro_data = ProductExhibitorDetail.objects.create(
-                        **detail, products=instance)
-                     
         return instance
 
 class BidSerializer(serializers.ModelSerializer):

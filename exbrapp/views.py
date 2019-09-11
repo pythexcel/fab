@@ -15,8 +15,8 @@ class ExhibitorRequire(APIView):
 
     def post(self, request, format=None, pk=None):
         exhibhition = Exhibition.objects.get(pk=pk)
-        serializer = ExhibitorSerializer(data=request.data)
-        print(serializer)
+        serializer = ExhibitorSerializer(data=request.data,many=False)
+        print(serializer.initial_data)
         if serializer.is_valid():
             serializer.save(user=self.request.user,
                             exhibition_id=exhibhition.id)
