@@ -53,13 +53,15 @@ class UserAuth(APIView):
                             password=request.data.get("password"))
         print(user)
         if user is not None:
+            ser = UserDetailSerializer(user)
+            role = ser.data['role']
             try:
                 token = Token.objects.get(user_id=user.id)
             except:
                 token = Token.objects.create(user=user)
                 print(token.key)
                 print(user)
-            return Response({"token": token.key, "error": False})
+            return Response({"token": token.key,"role": role, "error": False})
         else:
             data = {
                 "error": True,
