@@ -15,8 +15,8 @@ class ExhibitorRequire(APIView):
 
     def post(self, request, format=None, pk=None):
         exhibhition = Exhibition.objects.get(pk=pk)
-        serializer = ExhibitorSerializer(data=request.data)
-        print(serializer)
+        serializer = ExhibitorSerializer(data=request.data,many=False)
+        print(serializer.initial_data)
         if serializer.is_valid():
             serializer.save(user=self.request.user,
                             exhibition_id=exhibhition.id)
@@ -62,8 +62,7 @@ class ExhibhitDetails(APIView):
 
 
 class Fabricatorslist(APIView):
-    permission_classes = (IsAuthenticated, IsExhibitor)
-
+    
     def get(self, request, format=None, pk=None):
         exi = ExhibitFab.objects.filter(exhibition_id=pk)
         serializer = ExhibitFabricators(exi, many=True)
@@ -71,14 +70,15 @@ class Fabricatorslist(APIView):
         for data in serializer.data:
             user = User.objects.get(id=data['user'],is_active=True)
             serial = UserDetailSerializer(user, many=False)
-            user_list.append(serial.data)
+            tp = serial.data
+            tp['selected'] = False
+            user_list.append(tp)
 
         return Response(user_list)
 
 
 class Fabricator_dt(APIView):
-    permission_classes = (IsAuthenticated, IsExhibitor)
-
+    
     def get(self, request, format=None, pk=None, user_pk=None):
         exi = ExhibitFab.objects.get(exhibition_id=pk, user_id=user_pk)
         serializer = ExhibitFabricators(exi, many=False)

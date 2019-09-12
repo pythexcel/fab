@@ -21,19 +21,20 @@ class Exhibitor(models.Model):
     carpet = models.CharField(max_length=350)
     extra = models.CharField(max_length=3000, null=True, blank=True)
     website_link = models.URLField(max_length=350)
+    products = models.CharField(max_length=3000, null=True, blank=True)
     created_on = models.DateTimeField(auto_now_add=True)
 
 
-class ProductExhibitorDetail(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    products = models.ForeignKey(Exhibitor,
-                                 related_name='products',
-                                 on_delete=models.CASCADE)
-    product = models.TextField()
-    quantity = models.IntegerField(default=0)
+# class ProductExhibitorDetail(models.Model):
+#     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+#     products = models.ForeignKey(Exhibitor,
+#                                  related_name='products',
+#                                  on_delete=models.CASCADE)
+#     product = models.TextField()
+#     quantity = models.IntegerField(default=0)
 
-    def __str__(self):
-        return '%d: %s' % (self.quantity, self.product)
+#     def __str__(self):
+#         return '%d: %s' % (self.quantity, self.product)
 
 
 class BrandingExhibitorDetail(models.Model):
@@ -75,3 +76,7 @@ class Bid(models.Model):
     response_status = models.BooleanField(default=False)
     comment = models.CharField(max_length=8000, null=True, blank=True)
     total_price = models.FloatField(null=True, blank=True, default=None)
+
+    class Meta:
+        unique_together = (('fabs_user', 'mine_exhib'), )
+

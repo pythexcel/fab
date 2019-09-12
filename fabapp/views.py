@@ -17,7 +17,8 @@ from fabapp.serializers import (UserRegisterSerializer, UserDetailSerializer,
                                 ExhibitionSerializer, ExhibitFabricators,
                                 ExhibitionDetail, AvailBrandSerializer,
                                 AvailFurniSerializer, AvailProdSerializer)
-
+from exbrapp.models import Bid
+from exbrapp.serializers import BidSerializer
 
 class Test(APIView):
     def get(self, requset):
@@ -34,16 +35,15 @@ class UserRegister(APIView):
                 token = Token.objects.create(user=user)
                 json = serializer.data
                 json['token'] = token.key
+                role = json['role']
                 email = str(user)
                 return Response({
                     "token": token.key,
+                    "Role": role,
                     "error": False
-                },
-                                status=status.HTTP_201_CREATED)
+                },status=status.HTTP_201_CREATED)
         else:
-
             data = {"error": True, "errors": serializer.errors}
-
             return Response(data, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -53,13 +53,15 @@ class UserAuth(APIView):
                             password=request.data.get("password"))
         print(user)
         if user is not None:
+            ser = UserDetailSerializer(user)
+            role = ser.data['role']
             try:
                 token = Token.objects.get(user_id=user.id)
             except:
                 token = Token.objects.create(user=user)
                 print(token.key)
                 print(user)
-            return Response({"token": token.key, "error": False})
+            return Response({"token": token.key,"role": role, "error": False})
         else:
             data = {
                 "error": True,
@@ -76,13 +78,38 @@ class Userprofile(APIView):
         ser = UserDetailSerializer(request.user)
         exhibitor = Exhibitor.objects.filter(user=self.request.user)
         serializer = ExhibitorSerializer(exhibitor, many=True)
+        total = serializer.data
+        for elem in total:
+            ua = []
+            es = Bid.objects.filter(mine_exhib_id=elem['id'],work_status=True)
+            if len(es) > 0:
+                esr = BidSerializer(es,many=True)
+                for delta in esr.data:
+                    ua.append(delta["fabs_user"])
+            else:
+                bs = Bid.objects.filter(mine_exhib_id=elem['id'])
+                bsr = BidSerializer(bs,many=True)
+                for dub in bsr.data:
+                    ua.append(dub["fabs_user"])
+            
+            elem["FAB_USER"] = ua
+            
         portfolio = Portfolio.objects.filter(user=self.request.user)
         serial = FabricatorSerializer(portfolio, many=True)
+        exi_bid = Bid.objects.filter(mine_exhib__user__id=request.user.id)
+        exi_bid_serial = BidSerializer(exi_bid,many=True)
+        fab_bid = Bid.objects.filter(fabs_user_id=request.user.id,work_status=False)
+        fab_bid_serial = BidSerializer(fab_bid,many=True)
+
         return Response([
             ser.data, {
-                "exhbhition_request": serializer.data
+                "exhbhition_request": total
             }, {
                 "Portfolio": serial.data
+            },{
+                "Exhibitor_bid_request": exi_bid_serial.data
+            }, {
+                "Fabricator_bid_request": fab_bid_serial.data
             }
         ])
 
@@ -143,7 +170,7 @@ class CreateExhibition(APIView):
     def delete(self, request, format=None, pk=None):
         exhibition = Exhibition.objects.get(pk=pk)
         exhibition.delete()
-        return Response("Exhibition Deleted",status=status.HTTP_204_NO_CONTENT)
+        return Response({"Message":"Exhibition deleted"})
 
 
 class ListExhibhition(APIView):

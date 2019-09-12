@@ -41,13 +41,12 @@ class FabricatorPortfolio(APIView):
     def delete(self, request, pk, format=None):
         exi = Portfolio.objects.get(user=self.request.user, pk=pk)
         exi.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response({"Message":"Portfolio Image Deleted","Success":True})
 
 class BidResponse(APIView):
     def get(self,request,format=None):
         user = self.request.user
         print(user.id)
-
         bids = Bid.objects.filter(fabs_user_id=user.id,work_status=False)
         serializer = BidSerializer(bids,many=True)
         return Response(serializer.data)
