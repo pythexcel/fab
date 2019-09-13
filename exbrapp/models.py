@@ -23,7 +23,7 @@ class Exhibitor(models.Model):
     website_link = models.URLField(max_length=350)
     products = models.CharField(max_length=3000, null=True, blank=True)
     created_on = models.DateTimeField(auto_now_add=True)
-
+    
 
 # class ProductExhibitorDetail(models.Model):
 #     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)

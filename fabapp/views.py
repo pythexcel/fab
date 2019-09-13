@@ -3,7 +3,7 @@ from rest_framework.views import APIView
 from cloudinary.templatetags import cloudinary
 from rest_framework.authtoken.models import Token
 from rest_framework.parsers import MultiPartParser, FormParser, FileUploadParser
-from fabapp.models import User, Exhibition, ExhibitFab, AvailBrand, AvailProd, AvailFurni
+from fabapp.models import User, Exhibition, ExhibitFab, AvailBrand, AvailProd, AvailFurni,Message
 from rest_framework import status
 from django.contrib.auth import authenticate
 from rest_framework.parsers import MultiPartParser, FormParser, FileUploadParser
@@ -16,7 +16,7 @@ from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from fabapp.serializers import (UserRegisterSerializer, UserDetailSerializer,
                                 ExhibitionSerializer, ExhibitFabricators,
                                 ExhibitionDetail, AvailBrandSerializer,
-                                AvailFurniSerializer, AvailProdSerializer)
+                                AvailFurniSerializer, AvailProdSerializer,MessageSerializer)
 from exbrapp.models import Bid
 from exbrapp.serializers import BidSerializer
 
@@ -44,23 +44,29 @@ class UserRegister(APIView):
                 },status=status.HTTP_201_CREATED)
         else:
             data = {"error": True, "errors": serializer.errors}
+
             return Response(data, status=status.HTTP_400_BAD_REQUEST)
 
 
 class UserAuth(APIView):
     def post(self, request):
+        fcm = request.data.get("fcm_token")
         user = authenticate(email=request.data.get("email"),
                             password=request.data.get("password"))
-        print(user)
         if user is not None:
             ser = UserDetailSerializer(user)
+            fb = User.objects.get(id = user.id)
+            fb.fcm_token = fcm
+            fb.save()
             role = ser.data['role']
+            print(user.id)
             try:
                 token = Token.objects.get(user_id=user.id)
             except:
                 token = Token.objects.create(user=user)
                 print(token.key)
                 print(user)
+                
             return Response({"token": token.key,"role": role, "error": False})
         else:
             data = {
@@ -291,3 +297,54 @@ class listItem(APIView):
         dict['products'] = serial.data
         dict['furnitures'] = ser.data
         return Response(dict)
+
+
+
+class ChatMessages(APIView):
+    permission_classes = (IsAuthenticated, )
+
+    def post(self, request, pk=None):
+        sender = self.request.user
+        message = request.data.get("message")
+        reciever = User.objects.get(id=pk)
+        send_msg = Message(sender_id=sender.id,
+                           receiver_id=reciever.fcm_token,
+                           message=message)
+        send_msg.save()
+        serialzier = MessageSerializer(send_msg, many=False)
+        devices = FCMDevice.objects.get(user_id =reciever.fcm_token)
+        devices.send_message(title="Message", body=message)
+        return Response(serialzier.data, status=status.HTTP_201_CREATED)
+
+    def get(self, request, pk=None):
+        sender = self.request.user
+        reciever = User.objects.get(id=pk)
+        messages = Message.objects.filter(sender_id=reciever.id,
+                                          receiver_id=sender.fcm_token)
+        for message in messages:
+            message.is_read = True
+            message.save()
+        serializer = MessageSerializer(messages, many=True)
+        my_msg = Message.objects.filter(sender_id=sender.id,
+                                        receiver_id=reciever.id)
+        serial = MessageSerializer(my_msg, many=True)
+        total = serializer.data + serial.data
+        return JsonResponse(total, safe=False)
+
+
+class ParticularUser(APIView):
+    
+    permission_classes = (IsAuthenticated, )
+
+    def get(self, request, pk=None):
+        user = User.objects.get(id=pk)
+        serialzizer = UserDetailSerializer(user, many=False)
+        senderUser = serialzizer.data
+        sender = self.request.user
+        my = Message.objects.filter(sender_id=user.id,
+                                    receiver_id=sender.fcm_token,
+                                    is_read=False)
+        serial = MessageSerializer(my, many=True)
+        senderUser["messages"] = serial.data
+        return Response(senderUser)
+

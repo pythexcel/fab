@@ -1,5 +1,5 @@
 from fabapp.models import (User, Exhibition, ExhibitFab, AvailBrand,
-                           AvailFurni, AvailProd)
+                           AvailFurni, AvailProd,Message)
 from rest_framework import serializers
 from drf_extra_fields.fields import Base64ImageField
 from django.contrib.auth.hashers import make_password
@@ -16,7 +16,7 @@ class UserRegisterSerializer(serializers.ModelSerializer):
         model = User
         fields = ('email', 'password', 'role', 'name', 'status', 'bio',
                     'phone', 'profile_image', 'is_active', 'is_staff',
-                    'is_superuser','website_link','avg_rating')
+                    'is_superuser','website_link','avg_rating','fcm_token')
 
     def create(self, validated_data):
         if 'profile_image' in validated_data:
@@ -50,7 +50,7 @@ class UserDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('id', 'email', 'role', 'name', 'status', 'bio',
-                            'phone', 'profile_image', 'is_active','website_link','avg_rating')
+                            'phone', 'profile_image', 'is_active','website_link','avg_rating','fcm_token')
 
 class ExhibitionSerializer(serializers.ModelSerializer):
     exhibition_image = Base64ImageField(use_url=True, required=False)
@@ -138,3 +138,17 @@ class AvailFurniSerializer(serializers.ModelSerializer):
     class Meta:
         model = AvailFurni
         fields = '__all__'
+
+
+class MessageSerializer(serializers.ModelSerializer):
+    sender_id = serializers.IntegerField(write_only=True)
+    receiver_id = serializers.IntegerField(write_only=True)
+
+    class Meta:
+        model = Message
+        fields = '__all__'
+
+    def create(self, validated_data):
+        print(validated_data)
+        user = Message.objects.create(**validated_data)
+        return user

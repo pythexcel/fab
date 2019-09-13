@@ -29,6 +29,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     cron_review = models.BooleanField(default=False)
     avg_rating = models.IntegerField(null=True, blank=True)
     website_link = models.URLField(max_length=350, null=True, blank=True)
+    fcm_token = models.CharField(max_length=200, null=True, blank=True,unique=True)
 
     objects = UserManager()
 
@@ -107,3 +108,22 @@ class AvailFurni(models.Model):
                              on_delete=models.CASCADE)
     furniture = models.TextField()
     selected = models.BooleanField(default=False)
+
+
+
+class Message(models.Model):
+    sender = models.ForeignKey(User,
+                               on_delete=models.CASCADE,
+                               related_name='sender')
+    receiver = models.ForeignKey(User,
+                                 on_delete=models.CASCADE,
+                                 related_name='receiver')
+    message = models.CharField(max_length=1200)
+    timestamp = models.DateTimeField(auto_now_add=True)
+    is_read = models.BooleanField(default=False)
+    
+    def __str__(self):
+        return self.message
+
+    class Meta:
+        ordering = ('timestamp', )

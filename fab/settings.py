@@ -24,6 +24,10 @@ ALLOWED_HOSTS = ["*"]
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_CREDENTIALS = True
 
+FCM_DJANGO_SETTINGS = {
+        "FCM_SERVER_KEY": "AIzaSyDJ2EjngU1l9fOd0wPZpytw_1aC8_KRNnM"
+}
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -35,7 +39,8 @@ INSTALLED_APPS = [
     'fabrapp.apps.FabrappConfig',
     'review.apps.ReviewConfig',
     'corsheaders',
-    "django_apscheduler",
+    'fcm_django',
+    'django_apscheduler',
     'phonenumber_field',
     'django.contrib.admin',
     'django.contrib.auth',
