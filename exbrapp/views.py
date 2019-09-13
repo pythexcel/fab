@@ -8,6 +8,7 @@ from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from exbrapp.serializers import (ExhibitorSerializer,BidSerializer)
 from exbrapp.permissions import IsExhibitor
 from fabapp.serializers import UserDetailSerializer, ExhibitFabricators
+from fcm_django.models import FCMDevice
 
 
 class ExhibitorRequire(APIView):
@@ -103,13 +104,17 @@ class CreateBid(APIView):
         exhibhition = Exhibitor.objects.get(pk=exi_pk)
         print(exhibhition.id)
         bid = Bid.objects.filter(fabs_user_id=fab_user.id,mine_exhib_id=exhibhition.id)
-        if bid is None:
+        if not bid:
             bid = Bid(fabs_user_id=fab_user.id,mine_exhib_id=exhibhition.id)
             bid.save()
             serializer = BidSerializer(bid, many=False)
+            ser = UserDetailSerializer(fab_user,many=False)
+            devices = FCMDevice.objects.get(user=ser.data['id'])
+            devices.send_message(title="Message", body="")
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
             return Response({"is_already_added": True})
+
     def put(self,request,format=None,pk=None):
         bid = Bid.objects.get(id=pk)
         bid.work_status = True
