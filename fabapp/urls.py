@@ -19,7 +19,10 @@ urlpatterns = [
     url('addprod', views.Addprod.as_view()),
     url('addbrand', views.Addbrand.as_view()),
     url('addfunr', views.Addfurni.as_view()),
-    url('listitem', views.listItem.as_view())
+    url('listitem', views.listItem.as_view()),
+    url('chat/<int:pk>', views.ChatMessages.as_view()),
+    url('chat', views.ChatMessages.as_view()),
+    url('partuser/<int:pk>', views.ParticularUser.as_view())
 
 
 ]
