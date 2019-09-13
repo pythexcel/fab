@@ -314,6 +314,7 @@ class ChatMessages(APIView):
         send_msg.save()
         serialzier = MessageSerializer(send_msg, many=False)
         devices = reciever.fcm_token
+        print(reciever.fcm_token)
         devices.send_message(title="Message", body=message)
         return Response(serialzier.data, status=status.HTTP_201_CREATED)
 
