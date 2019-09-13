@@ -310,7 +310,8 @@ class ChatMessages(APIView):
         reciever = User.objects.get(id=pk)
         ser = UserDetailSerializer(reciever,many=False)
         
-        
+        print(ser.data)
+        print(ser.data['fcm_token'])
         send_msg = Message(sender_id=sender.id,
                            receiver_id=reciever.id,
                            message=message)
