@@ -312,7 +312,7 @@ class ChatMessages(APIView):
                            message=message)
         send_msg.save()
         serialzier = MessageSerializer(send_msg, many=False)
-        devices = FCMDevice.objects.get(user_id =reciever.fcm_token)
+        devices = reciever.fcm_token
         devices.send_message(title="Message", body=message)
         return Response(serialzier.data, status=status.HTTP_201_CREATED)
 
