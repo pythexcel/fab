@@ -102,11 +102,14 @@ class CreateBid(APIView):
         print(fab_user)
         exhibhition = Exhibitor.objects.get(pk=exi_pk)
         print(exhibhition.id)
-        bid = Bid(fabs_user_id=fab_user.id,mine_exhib_id=exhibhition.id)
-        bid.save()
-        serializer = BidSerializer(bid, many=False)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-
+        bid = Bid.objects.filter(fabs_user_id=fab_user.id,mine_exhib_id=exhibhition.id)
+        if bid is None:
+            bid = Bid(fabs_user_id=fab_user.id,mine_exhib_id=exhibhition.id)
+            bid.save()
+            serializer = BidSerializer(bid, many=False)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            return Response({"is_already_added": True})
     def put(self,request,format=None,pk=None):
         bid = Bid.objects.get(id=pk)
         bid.work_status = True
