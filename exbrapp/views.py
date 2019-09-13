@@ -1,6 +1,7 @@
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from fabapp.models import User, Exhibition, ExhibitFab
+from fabapp.serializers import ExhibitionSerializer
 from exbrapp.models import Exhibitor,Bid
 from rest_framework import status
 from rest_framework.response import Response
@@ -102,6 +103,8 @@ class CreateBid(APIView):
         fab_user = User.objects.get(pk=pk,is_active=True)
         print(fab_user)
         exhibhition = Exhibitor.objects.get(pk=exi_pk)
+        exi_ser = ExhibitorSerializer(exhibhition,many=False)
+        exhibition_name = exi_ser.data['exhibition']['exhibition_name']
         print(exhibhition.id)
         bid = Bid.objects.filter(fabs_user_id=fab_user.id,mine_exhib_id=exhibhition.id)
         if not bid:
@@ -110,7 +113,8 @@ class CreateBid(APIView):
             serializer = BidSerializer(bid, many=False)
             ser = UserDetailSerializer(fab_user,many=False)
             devices = FCMDevice.objects.get(user=ser.data['id'])
-            devices.send_message(title="Message", body="")
+            devices.send_message(title="Notification from "+ self.request.user + "You have beed Invited for "+ exhibition_name,
+             body="")
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
             return Response({"is_already_added": True})
