@@ -109,8 +109,8 @@ class CreateBid(APIView):
             bid.save()
             serializer = BidSerializer(bid, many=False)
             ser = UserDetailSerializer(fab_user,many=False)
-            devices = FCMDevice.objects.get(user=ser.data['id'])
-            devices.send_message(title="Message", body="")
+            # devices = FCMDevice.objects.get(user=ser.data['id'])
+            # devices.send_message(title="Message", body="")
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
             return Response({"is_already_added": True})
