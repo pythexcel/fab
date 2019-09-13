@@ -111,14 +111,14 @@ class CreateBid(APIView):
         print(exhibhition.id)
         ser = UserDetailSerializer(fab_user,many=False)
         devices = FCMDevice.objects.get(user=ser.data['id'])
-        devices.send_message(title="Notification" ,  body=""Notification from "+ my_name+ "You have beed Invited for "+ exhibition_name")
+        devices.send_message(title="Notification",body="Notification from "+ my_name+ "You have beed Invited for "+ exhibition_name)
         bid = Bid.objects.filter(fabs_user_id=fab_user.id,mine_exhib_id=exhibhition.id)
         if not bid:
             bid = Bid(fabs_user_id=fab_user.id,mine_exhib_id=exhibhition.id)
             bid.save()
             serializer = BidSerializer(bid, many=False)
             devices = FCMDevice.objects.get(user=ser.data['id'])
-            devices.send_message(title="Notification" ,  body=""Notification from "+ my_name+ "You have beed Invited for "+ exhibition_name")
+            devices.send_message(title="Notification",body="Notification from "+ my_name+ "You have beed Invited for "+ exhibition_name)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
             return Response({"is_already_added": True})
