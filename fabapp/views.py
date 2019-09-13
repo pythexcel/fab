@@ -73,8 +73,11 @@ class UserAuth(APIView):
             fb.fcm_token = fcm
             fb.save()
             print(ser.data['id'])
-            devices = FCMDevice.objects.get(user=ser.data['id'])
-            if not devices:
+            try:
+                devices = FCMDevice.objects.get(user=ser.data['id'])
+            except FCMDevice.DoesNotExist:
+                devices = None
+            if devices is None:
                 device = FCMDevice()
                 device.user = user
                 device.registration_id = fcm
