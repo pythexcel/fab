@@ -72,9 +72,18 @@ class UserAuth(APIView):
             fb = User.objects.get(id=user.id)
             fb.fcm_token = fcm
             fb.save()
-            device = FCMDevice.objects.get(user=ser.data['id'])
-            device.registration_id = fcm
-            device.save()
+            print(ser.data['id'])
+            device = FCMDevice.objects.filter(user=ser.data['id'])
+            if not device:
+                device = FCMDevice()
+                device.user = user
+                device.registration_id = fcm
+                device.type = "Android"
+                device.name = "Can be anything"
+                device.save()
+            else:
+                device.registration_id = fcm
+                device.save()
             role = ser.data['role']
             print(user.id)
             try:
@@ -336,7 +345,7 @@ class ChatMessages(APIView):
                            message=message)
         send_msg.save()
         serialzier = MessageSerializer(send_msg, many=False)
-        device = FCMDevice.objects.get(user=ser.data['id'])
+        devices = FCMDevice.objects.get(user=ser.data['id'])
         devices.send_message(title="Message", body=message)
         return Response("Message Sended", status=status.HTTP_201_CREATED)
 
