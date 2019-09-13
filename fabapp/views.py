@@ -1,9 +1,10 @@
 from rest_framework.response import Response
+from fcm_django.models import FCMDevice
 from rest_framework.views import APIView
 from cloudinary.templatetags import cloudinary
 from rest_framework.authtoken.models import Token
 from rest_framework.parsers import MultiPartParser, FormParser, FileUploadParser
-from fabapp.models import User, Exhibition, ExhibitFab, AvailBrand, AvailProd, AvailFurni,Message
+from fabapp.models import User, Exhibition, ExhibitFab, AvailBrand, AvailProd, AvailFurni, Message
 from rest_framework import status
 from django.http import JsonResponse
 from django.contrib.auth import authenticate
@@ -17,9 +18,11 @@ from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from fabapp.serializers import (UserRegisterSerializer, UserDetailSerializer,
                                 ExhibitionSerializer, ExhibitFabricators,
                                 ExhibitionDetail, AvailBrandSerializer,
-                                AvailFurniSerializer, AvailProdSerializer,MessageSerializer)
+                                AvailFurniSerializer, AvailProdSerializer,
+                                MessageSerializer)
 from exbrapp.models import Bid
 from exbrapp.serializers import BidSerializer
+
 
 class Test(APIView):
     def get(self, requset):
@@ -36,13 +39,23 @@ class UserRegister(APIView):
                 token = Token.objects.create(user=user)
                 json = serializer.data
                 json['token'] = token.key
+                fcm_token = json['fcm_token']
+                user = json['id'] 
                 role = json['role']
+                device = FCMDevice()
+                device.registration_id = fcm_token
+                device.type = "Android"
+                device.name = "Can be anything"
+                device.user = user
+                device.save()
                 email = str(user)
-                return Response({
-                    "token": token.key,
-                    "Role": role,
-                    "error": False
-                },status=status.HTTP_201_CREATED)
+                return Response(
+                    {
+                        "token": token.key,
+                        "Role": role,
+                        "error": False
+                    },
+                    status=status.HTTP_201_CREATED)
         else:
             data = {"error": True, "errors": serializer.errors}
 
@@ -56,9 +69,12 @@ class UserAuth(APIView):
                             password=request.data.get("password"))
         if user is not None:
             ser = UserDetailSerializer(user)
-            fb = User.objects.get(id = user.id)
+            fb = User.objects.get(id=user.id)
             fb.fcm_token = fcm
             fb.save()
+            device = FCMDevice.objects.get(user=ser.data['id'])
+            device.registration_id = fcm
+            device.save()
             role = ser.data['role']
             print(user.id)
             try:
@@ -67,8 +83,8 @@ class UserAuth(APIView):
                 token = Token.objects.create(user=user)
                 print(token.key)
                 print(user)
-                
-            return Response({"token": token.key,"role": role, "error": False})
+
+            return Response({"token": token.key, "role": role, "error": False})
         else:
             data = {
                 "error": True,
@@ -88,32 +104,33 @@ class Userprofile(APIView):
         total = serializer.data
         for elem in total:
             ua = []
-            es = Bid.objects.filter(mine_exhib_id=elem['id'],work_status=True)
+            es = Bid.objects.filter(mine_exhib_id=elem['id'], work_status=True)
             if len(es) > 0:
-                esr = BidSerializer(es,many=True)
+                esr = BidSerializer(es, many=True)
                 for delta in esr.data:
                     ua.append(delta["fabs_user"])
             else:
                 bs = Bid.objects.filter(mine_exhib_id=elem['id'])
-                bsr = BidSerializer(bs,many=True)
+                bsr = BidSerializer(bs, many=True)
                 for dub in bsr.data:
                     ua.append(dub["fabs_user"])
-            
+
             elem["FAB_USER"] = ua
-            
+
         portfolio = Portfolio.objects.filter(user=self.request.user)
         serial = FabricatorSerializer(portfolio, many=True)
         exi_bid = Bid.objects.filter(mine_exhib__user__id=request.user.id)
-        exi_bid_serial = BidSerializer(exi_bid,many=True)
-        fab_bid = Bid.objects.filter(fabs_user_id=request.user.id,work_status=False)
-        fab_bid_serial = BidSerializer(fab_bid,many=True)
+        exi_bid_serial = BidSerializer(exi_bid, many=True)
+        fab_bid = Bid.objects.filter(fabs_user_id=request.user.id,
+                                     work_status=False)
+        fab_bid_serial = BidSerializer(fab_bid, many=True)
 
         return Response([
             ser.data, {
                 "exhbhition_request": total
             }, {
                 "Portfolio": serial.data
-            },{
+            }, {
                 "Exhibitor_bid_request": exi_bid_serial.data
             }, {
                 "Fabricator_bid_request": fab_bid_serial.data
@@ -122,7 +139,9 @@ class Userprofile(APIView):
 
     def put(self, request, pk=None):
         user = User.objects.get(id=pk)
-        serializer = UserRegisterSerializer(user,data=request.data,partial=True)
+        serializer = UserRegisterSerializer(user,
+                                            data=request.data,
+                                            partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response("Profile Updated")
@@ -138,7 +157,8 @@ class CreateExhibition(APIView):
             serializer.save(user=request.user)
             detail = Exhibition.objects.get(id=serializer.data['id'])
             ser = ExhibitionDetail(detail, many=False)
-            return Response("Exhibition Created", status=status.HTTP_201_CREATED)
+            return Response("Exhibition Created",
+                            status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def get(self, request, format=None):
@@ -168,7 +188,9 @@ class CreateExhibition(APIView):
 
     def put(self, request, format=None, pk=None):
         exhibition = Exhibition.objects.get(pk=pk)
-        serialzier = ExhibitionSerializer(exhibition,data=request.data,partial=True)
+        serialzier = ExhibitionSerializer(exhibition,
+                                          data=request.data,
+                                          partial=True)
         if serialzier.is_valid():
             serialzier.save()
             return Response("Exhibition updated")
@@ -177,7 +199,7 @@ class CreateExhibition(APIView):
     def delete(self, request, format=None, pk=None):
         exhibition = Exhibition.objects.get(pk=pk)
         exhibition.delete()
-        return Response({"Message":"Exhibition deleted"})
+        return Response({"Message": "Exhibition deleted"})
 
 
 class ListExhibhition(APIView):
@@ -300,27 +322,23 @@ class listItem(APIView):
         return Response(dict)
 
 
-
 class ChatMessages(APIView):
     permission_classes = (IsAuthenticated, )
 
-    def post(self, request, pk=None):
+    def post(self, request,pk=None):    
         sender = self.request.user
         message = request.data.get("message")
         reciever = User.objects.get(id=pk)
         ser = UserDetailSerializer(reciever,many=False)
-        
-        print(ser.data)
-        print(ser.data['fcm_token'])
+
         send_msg = Message(sender_id=sender.id,
                            receiver_id=reciever.id,
                            message=message)
         send_msg.save()
         serialzier = MessageSerializer(send_msg, many=False)
-        devices = ser.data['fcm_token']
-       
+        device = FCMDevice.objects.get(user=ser.data['id'])
         devices.send_message(title="Message", body=message)
-        return Response(serialzier.data, status=status.HTTP_201_CREATED)
+        return Response("Message Sended", status=status.HTTP_201_CREATED)
 
     def get(self, request, pk=None):
         sender = self.request.user
@@ -339,7 +357,7 @@ class ChatMessages(APIView):
 
 
 class ParticularUser(APIView):
-    
+
     permission_classes = (IsAuthenticated, )
 
     def get(self, request, pk=None):
@@ -353,4 +371,3 @@ class ParticularUser(APIView):
         serial = MessageSerializer(my, many=True)
         senderUser["messages"] = serial.data
         return Response(senderUser)
-

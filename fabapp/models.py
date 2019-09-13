@@ -29,7 +29,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     cron_review = models.BooleanField(default=False)
     avg_rating = models.IntegerField(null=True, blank=True)
     website_link = models.URLField(max_length=350, null=True, blank=True)
-    fcm_token = models.CharField(max_length=200, null=True, blank=True,unique=True)
+    fcm = models.CharField(max_length=200, null=True, blank=True,unique=True)
 
     objects = UserManager()
 
