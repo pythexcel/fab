@@ -110,6 +110,7 @@ class Userprofile(APIView):
     permission_classes = (IsAuthenticated, )
 
     def get(self, request):
+        print(self.request.user)
         ser = UserDetailSerializer(request.user)
         exhibitor = Exhibitor.objects.filter(user=self.request.user)
         serializer = ExhibitorSerializer(exhibitor, many=True)

@@ -100,6 +100,9 @@ class CreateBid(APIView):
 
 
     def post(self,request,format=None,pk=None,exi_pk=None):
+        user = self.request.user
+        own_ser = UserDetailSerializer(user,many=False)
+        my_name = own_ser.data['name']
         fab_user = User.objects.get(pk=pk,is_active=True)
         print(fab_user)
         exhibhition = Exhibitor.objects.get(pk=exi_pk)
@@ -108,7 +111,7 @@ class CreateBid(APIView):
         print(exhibhition.id)
         ser = UserDetailSerializer(fab_user,many=False)
         devices = FCMDevice.objects.get(user=ser.data['id'])
-        devices.send_message(title="Notification from  You have beed Invited for",  body="")
+        devices.send_message(title="Notification from"+ my_name+  "You have beed Invited for"+ exhibition_name,  body="")
         bid = Bid.objects.filter(fabs_user_id=fab_user.id,mine_exhib_id=exhibhition.id)
         if not bid:
             bid = Bid(fabs_user_id=fab_user.id,mine_exhib_id=exhibhition.id)
