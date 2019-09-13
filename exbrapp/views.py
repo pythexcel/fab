@@ -106,12 +106,12 @@ class CreateBid(APIView):
         exi_ser = ExhibitorSerializer(exhibhition,many=False)
         exhibition_name = exi_ser.data['exhibition']['exhibition_name']
         print(exhibhition.id)
+        ser = UserDetailSerializer(fab_user,many=False)
         bid = Bid.objects.filter(fabs_user_id=fab_user.id,mine_exhib_id=exhibhition.id)
         if not bid:
             bid = Bid(fabs_user_id=fab_user.id,mine_exhib_id=exhibhition.id)
             bid.save()
             serializer = BidSerializer(bid, many=False)
-            ser = UserDetailSerializer(fab_user,many=False)
             devices = FCMDevice.objects.get(user=ser.data['id'])
             devices.send_message(title="Notification from "+ self.request.user + "You have beed Invited for "+ exhibition_name,
              body="")
