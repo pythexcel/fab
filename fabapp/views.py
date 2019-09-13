@@ -308,6 +308,8 @@ class ChatMessages(APIView):
         sender = self.request.user
         message = request.data.get("message")
         reciever = User.objects.get(id=pk)
+        print(reciever)
+        print(reciever.fcm_token)
         send_msg = Message(sender_id=sender.id,
                            receiver_id=reciever.id,
                            message=message)
