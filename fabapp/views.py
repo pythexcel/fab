@@ -308,7 +308,7 @@ class ChatMessages(APIView):
         message = request.data.get("message")
         reciever = User.objects.get(id=pk)
         send_msg = Message(sender_id=sender.id,
-                           receiver_id=reciever.fcm_token,
+                           receiver_id=reciever.id,
                            message=message)
         send_msg.save()
         serialzier = MessageSerializer(send_msg, many=False)
@@ -320,7 +320,7 @@ class ChatMessages(APIView):
         sender = self.request.user
         reciever = User.objects.get(id=pk)
         messages = Message.objects.filter(sender_id=reciever.id,
-                                          receiver_id=sender.fcm_token)
+                                          receiver_id=sender.id)
         for message in messages:
             message.is_read = True
             message.save()
