@@ -117,6 +117,9 @@ class CreateBid(APIView):
              body="")
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
+            devices = FCMDevice.objects.get(user=ser.data['id'])
+            devices.send_message(title="Notification from "+ self.request.user + "You have beed Invited for "+ exhibition_name,
+             body="")
             return Response({"is_already_added": True})
 
     def put(self,request,format=None,pk=None):
