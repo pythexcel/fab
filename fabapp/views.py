@@ -73,8 +73,8 @@ class UserAuth(APIView):
             fb.fcm_token = fcm
             fb.save()
             print(ser.data['id'])
-            device = FCMDevice.objects.filter(user=ser.data['id'])
-            if not device:
+            devices = FCMDevice.objects.get(user=ser.data['id'])
+            if not devices:
                 device = FCMDevice()
                 device.user = user
                 device.registration_id = fcm
@@ -82,8 +82,8 @@ class UserAuth(APIView):
                 device.name = "Can be anything"
                 device.save()
             else:
-                device.registration_id = fcm
-                device.save()
+                devices.registration_id = fcm
+                devices.save()
             role = ser.data['role']
             print(user.id)
             try:
