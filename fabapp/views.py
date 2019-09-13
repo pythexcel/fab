@@ -5,6 +5,7 @@ from rest_framework.authtoken.models import Token
 from rest_framework.parsers import MultiPartParser, FormParser, FileUploadParser
 from fabapp.models import User, Exhibition, ExhibitFab, AvailBrand, AvailProd, AvailFurni,Message
 from rest_framework import status
+from django.http import JsonResponse
 from django.contrib.auth import authenticate
 from rest_framework.parsers import MultiPartParser, FormParser, FileUploadParser
 from rest_framework.response import Response
