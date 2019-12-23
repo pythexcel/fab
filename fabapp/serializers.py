@@ -22,9 +22,8 @@ class UserRegisterSerializer(serializers.ModelSerializer):
         if 'profile_image' in validated_data:
             password = validated_data.pop("password", None)
             pr_image = validated_data.pop("profile_image",None)
-            im = cloudinary.uploader.upload(pr_image)
             email = validated_data.pop("email", None)
-            user = User.objects.create(email=email,profile_image=im['url'],
+            user = User.objects.create(email=email,profile_image=pr_image,
                                     password=make_password(password),
                                     **validated_data)
         else:
@@ -38,8 +37,8 @@ class UserRegisterSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         instance.__dict__.update(validated_data)
         if 'profile_image'in validated_data:
-            im = cloudinary.uploader.upload(instance.profile_image)    
-            instance.profile_image = im['url']
+            # im = cloudinary.uploader.upload(instance.profile_image)    
+            instance.profile_image = validated_date.get('profile_image',instance.profile_image)
         else:
             pass
         instance.save()
@@ -65,11 +64,11 @@ class ExhibitionSerializer(serializers.ModelSerializer):
             print(validated_data['exhibition_image'])
             pr_image = validated_data.pop('exhibition_image')
             print(pr_image)
-            im = cloudinary.uploader.upload(pr_image)
-            print(im)
+            # im = cloudinary.uploader.upload(pr_image)
+            # print(im)
 
             user = Exhibition.objects.create(**validated_data,
-                                             exhibition_image=im['url'])
+                                             exhibition_image=pr_image)
         else:
             user = Exhibition.objects.create(**validated_data)
 

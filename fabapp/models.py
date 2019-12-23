@@ -22,7 +22,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     name = models.CharField(name="name", max_length=100)
     bio = models.TextField()
     phone = PhoneNumberField(null=False, blank=False, unique=True)
-    profile_image = CloudinaryField('image')
+    profile_image = models.ImageField(upload_to='images/') 
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
@@ -48,7 +48,7 @@ class Exhibition(models.Model):
                              null=True,
                              on_delete=models.CASCADE)
     exhibition_name = models.CharField(max_length=350)
-    exhibition_image = CloudinaryField('image')
+    exhibition_image = models.ImageField(upload_to='images/')
     Description = models.CharField(max_length=8000, null=True, blank=True)
     Start_date = models.DateTimeField('start_date',
                                       default=timezone.now,
