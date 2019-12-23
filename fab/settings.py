@@ -15,9 +15,9 @@ SECRET_KEY = '%=r3#altd4m)_%_y7)y$xu+1bb&7ms!kd2h@vb-j*6jw38kkx6'
 DEBUG = True 
 
 
-cloudinary.config(cloud_name=config('cloud_name'),
-                  api_key=config('api_key'),
-                  api_secret=config('api_secret'))
+# cloudinary.config(cloud_name=config('cloud_name'),
+#                   api_key=config('api_key'),
+#                   api_secret=config('api_secret'))
 
 
 ALLOWED_HOSTS = ["*"]
@@ -107,10 +107,19 @@ DATABASES = {
         'NAME': 'fab',
         'USER': 'root',
         'PASSWORD': 'java@123',  #java@123
-        'HOST': 'localhost',
-        'PORT': '',
+        'HOST': '176.9.137.77',
+        'PORT': '3306',
     }
 }
+# 'default': {
+#         'ENGINE': 'django.db.backends.mysql', 
+#         'NAME': 'mf_dev_testing',
+#         'USER': 'root',
+#         'PASSWORD': 'java@123',
+#         'HOST':'176.9.137.77',   # Or an IP Address that your DB is hosted on
+#         'PORT': '3306',
+#     }
+# }
 
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators
