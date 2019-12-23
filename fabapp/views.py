@@ -40,7 +40,6 @@ class UserRegister(APIView):
                 json = serializer.data
                 json['token'] = token.key
                 fcm_token = json['fcm_token']
-                user = json['id'] 
                 role = json['role']
                 device = FCMDevice()
                 device.registration_id = fcm_token
