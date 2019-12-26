@@ -22,6 +22,7 @@ from fabapp.serializers import (UserRegisterSerializer, UserDetailSerializer,
                                 MessageSerializer)
 from exbrapp.models import Bid
 from exbrapp.serializers import BidSerializer
+from fabapp.authentication import CustomAuthentication
 
 
 class Test(APIView):
@@ -32,7 +33,6 @@ class Test(APIView):
 class UserRegister(APIView):
     def post(self, request):
         serializer = UserRegisterSerializer(data=request.data)
-        print(serializer)
         if serializer.is_valid():
             user = serializer.save()
             if user:
@@ -64,14 +64,27 @@ class UserRegister(APIView):
 class UserAuth(APIView):
     def post(self, request):
         fcm = request.data.get("fcm_token")
-        user = authenticate(email=request.data.get("email"),
-                            password=request.data.get("password"))
+        if fcm is None:
+            return Response({"Message": "Please provide a fcm token","error": True})
+        email_phone = None
+        if 'email' in request.data:
+            if request.data['email'] != "":
+                email_phone = request.data['email']
+            else:
+                pass        
+        if 'phone' in request.data:
+            if request.data['phone'] != "":
+                email_phone = request.data['phone']
+            else:
+                pass
+        if email_phone is None:
+            return Response({"Message": "Please enter email or phone no","error": True})
+        user = CustomAuthentication().authenticate(email_or_phone=email_phone,password=request.data.get("password"))
         if user is not None:
             ser = UserDetailSerializer(user)
             fb = User.objects.get(id=user.id)
             fb.fcm_token = fcm
             fb.save()
-            print(ser.data['id'])
             try:
                 devices = FCMDevice.objects.get(user=ser.data['id'])
             except FCMDevice.DoesNotExist:
@@ -87,21 +100,16 @@ class UserAuth(APIView):
                 devices.registration_id = fcm
                 devices.save()
             role = ser.data['role']
-            print(user.id)
             try:
                 token = Token.objects.get(user_id=user.id)
             except:
                 token = Token.objects.create(user=user)
-                print(token.key)
-                print(user)
-
             return Response({"token": token.key, "role": role, "error": False})
         else:
             data = {
                 "error": True,
                 "msg": "User does not exist or password is wrong"
             }
-
             return Response(data, status=status.HTTP_401_UNAUTHORIZED)
 
 

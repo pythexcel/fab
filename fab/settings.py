@@ -107,8 +107,8 @@ DATABASES = {
         'NAME': 'fab',
         'USER': 'root',
         'PASSWORD': 'java@123',  #java@123
-        'HOST': '176.9.137.77',
-        'PORT': '3306',
+        'HOST': 'localhost',
+        'PORT': '',
     }
 }
 # 'default': {

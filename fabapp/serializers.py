@@ -14,7 +14,7 @@ class UserRegisterSerializer(serializers.ModelSerializer):
     class Meta:
 
         model = User
-        fields = ('email', 'password', 'role', 'name', 'status', 'bio',
+        fields = ('email', 'password', 'role', 'company_name', 'status',
                     'phone', 'profile_image', 'is_active', 'is_staff',
                     'is_superuser','website_link','avg_rating','fcm_token')
 
@@ -23,22 +23,22 @@ class UserRegisterSerializer(serializers.ModelSerializer):
             password = validated_data.pop("password", None)
             pr_image = validated_data.pop("profile_image",None)
             email = validated_data.pop("email", None)
-            user = User.objects.create(email=email,profile_image=pr_image,
+            phone = validated_data.pop("phone", None)
+            user = User.objects.create(email=email,profile_image=pr_image,phone=phone,
                                     password=make_password(password),
                                     **validated_data)
         else:
+            phone = validated_data.pop("phone", None)
             email = validated_data.pop("email", None)
             password = validated_data.pop("password", None)
-            user = User.objects.create(email=email,password=make_password(password),**validated_data)
+            user = User.objects.create(email=email,password=make_password(password),phone=phone,**validated_data)
 
         return user
-        # is called if we save serializer if it have an instance
 
     def update(self, instance, validated_data):
         instance.__dict__.update(validated_data)
         print(validated_data)
         if 'profile_image'in validated_data:
-            # im = cloudinary.uploader.upload(instance.profile_image)    
             instance.profile_image = validated_data.get('profile_image',instance.profile_image)
         else:
             pass
@@ -49,7 +49,7 @@ class UserRegisterSerializer(serializers.ModelSerializer):
 class UserDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('id', 'email', 'role', 'name', 'status', 'bio',
+        fields = ('id', 'email', 'role', 'company_name', 'status',
                             'phone', 'profile_image', 'is_active','website_link','avg_rating','fcm_token')
 
 class ExhibitionSerializer(serializers.ModelSerializer):
@@ -65,9 +65,6 @@ class ExhibitionSerializer(serializers.ModelSerializer):
             print(validated_data['exhibition_image'])
             pr_image = validated_data.pop('exhibition_image')
             print(pr_image)
-            # im = cloudinary.uploader.upload(pr_image)
-            # print(im)
-
             user = Exhibition.objects.create(**validated_data,
                                              exhibition_image=pr_image)
         else:
@@ -79,8 +76,6 @@ class ExhibitionSerializer(serializers.ModelSerializer):
         if 'exhibition_image' in validated_data:
             instance.exhibition_image = validated_data.get(
             'exhibition_image', instance.exhibition_image)    
-            # im = cloudinary.uploader.upload(instance.exhibition_image)    
-            # instance.exhibition_image = im['url']
             instance.exhibition_name = validated_data.get('exhibition_name',
                                                       instance.exhibition_name)
 

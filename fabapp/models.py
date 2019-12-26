@@ -12,16 +12,18 @@ from cloudinary.models import CloudinaryField
 class User(AbstractBaseUser, PermissionsMixin):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     email = models.EmailField(
-        unique=True,
+        unique=True,null=True, blank=True,
         error_messages={
             'unique': "User with this email already exists.",
         },
     )
     role = models.CharField(name="role", max_length=60)
     status = models.BooleanField(default=True)
-    name = models.CharField(name="name", max_length=100)
-    bio = models.TextField()
-    phone = PhoneNumberField(null=False, blank=False, unique=True)
+    company_name = models.CharField(name="company_name", max_length=100)
+    phone = PhoneNumberField(null=True, blank=True, unique=True,
+    error_messages={
+            'unique': "User with this phone no already exists.",
+        },)
     profile_image = models.ImageField(upload_to='images/') 
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
@@ -34,7 +36,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     objects = UserManager()
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['role', 'name', 'phone', 'bio']
+    REQUIRED_FIELDS = ['role', 'company_name']
 
     def __str__(self):
         return self.email

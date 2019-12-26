@@ -34,10 +34,8 @@ class FabricatorPortfolio(APIView):
         images = request.data['images']
         flag = 1
         for img_name in images:
-            print(img_name['image'])
             image_data = "data:image/gif;base64,"+img_name['image']
-            format, imgstr = image_data.split(';base64,')
-            ext = format.split('/')[-1]
+            imgstr = image_data.split(';base64,')
             data = ContentFile(base64.b64decode(imgstr), name='temp.' + 'jpg') 
             md = Portfolio(user_id=self.request.user.id,image=data)
             md.save()

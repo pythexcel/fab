@@ -12,11 +12,12 @@ class ExhibitionAdmin(admin.ModelAdmin):
 
 
 class UserAdmin(admin.ModelAdmin):
-    list_display = ('email', 'name', 'role', 'phone', 'is_active')
+    list_display = ('company_name', 'email', 'role', 'phone', 'is_active')
     list_filter = ('role', )
+    list_display_links = ('company_name',)
     search_fields = (
         'email',
-        'name',
+        'company_name',
         'phone',
     )
 
