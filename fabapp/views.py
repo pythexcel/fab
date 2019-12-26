@@ -4,7 +4,7 @@ from rest_framework.views import APIView
 from cloudinary.templatetags import cloudinary
 from rest_framework.authtoken.models import Token
 from rest_framework.parsers import MultiPartParser, FormParser, FileUploadParser
-from fabapp.models import User, Exhibition, ExhibitFab, AvailBrand, AvailProd, AvailFurni, Message
+from fabapp.models import User, Exhibition, ExhibitFab, AvailBrand, AvailProd, AvailFurni, Message, UpdateImage
 from rest_framework import status
 from django.http import JsonResponse
 from django.contrib.auth import authenticate
@@ -66,20 +66,25 @@ class UserAuth(APIView):
         fcm = request.data.get("fcm_token")
         if fcm is None:
             return Response({"Message": "Please provide a fcm token","error": True})
-        email_phone = None
+        email = None
+        phone = None
         if 'email' in request.data:
             if request.data['email'] != "":
-                email_phone = request.data['email']
+                email = request.data['email']
             else:
                 pass        
         if 'phone' in request.data:
             if request.data['phone'] != "":
-                email_phone = request.data['phone']
+                phone = request.data['phone']
             else:
                 pass
-        if email_phone is None:
-            return Response({"Message": "Please enter email or phone no","error": True})
-        user = CustomAuthentication().authenticate(email_or_phone=email_phone,password=request.data.get("password"))
+        if email is None:
+            if phone is None:
+                return Response({"Message": "Please enter email or phone no","error": True})
+        # if email is not None:         
+        user = CustomAuthentication().authenticate(email=email,phone=phone,password=request.data.get("password"))
+        # else:
+        #     user = CustomAuthentication().authenticate(email=email,phone=phone,password=request.data.get("password"))
         if user is not None:
             ser = UserDetailSerializer(user)
             fb = User.objects.get(id=user.id)
