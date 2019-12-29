@@ -25,16 +25,16 @@ class Exhibitor(models.Model):
     created_on = models.DateTimeField(auto_now_add=True)
     
 
-class ProductExhibitorDetail(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    products = models.ForeignKey(Exhibitor,
-                                 related_name='products',
-                                 on_delete=models.CASCADE)
-    product = models.TextField()
-    quantity = models.IntegerField(default=0)
+# class ProductExhibitorDetail(models.Model):
+#     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+#     products = models.ForeignKey(Exhibitor,
+#                                  related_name='products',
+#                                  on_delete=models.CASCADE)
+#     product = models.TextField()
+#     quantity = models.IntegerField(default=0)
 
-    def __str__(self):
-        return '%d: %s' % (self.quantity, self.product)
+#     def __str__(self):
+#         return '%d: %s' % (self.quantity, self.product)
 
 
 class BrandingExhibitorDetail(models.Model):

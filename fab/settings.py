@@ -32,6 +32,11 @@ FCM_DJANGO_SETTINGS = {
 
 INSTALLED_APPS = [
     'rest_framework.authtoken',
+    # 'django.contrib.admin',
+    'material.admin',
+    'material.admin.default',
+    'django.contrib.auth',
+    'django_apscheduler',
     'rest_framework',
     'cloudinary',
     'fabapp.apps.FabappConfig',
@@ -40,10 +45,7 @@ INSTALLED_APPS = [
     'review.apps.ReviewConfig',
     'corsheaders',
     'fcm_django',
-    'django_apscheduler',
     'phonenumber_field',
-    'django.contrib.admin',
-    'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
@@ -107,8 +109,8 @@ DATABASES = {
         'NAME': 'fab',
         'USER': 'root',
         'PASSWORD': 'java@123',  #java@123
-        'HOST': 'localhost',
-        'PORT': '',
+        'HOST': '176.9.137.77',
+        'PORT': '3306',
     }
 }
 # 'default': {
