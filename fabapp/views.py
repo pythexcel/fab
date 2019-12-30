@@ -367,7 +367,7 @@ class ChatMessages(APIView):
         if request.data['shared_image']:
             for elem in request.data['shared_image']:
                 image_data = "data:image/gif;base64,"+elem
-                imgstr = image_data.split(';base64,')
+                format,imgstr = image_data.split(';base64,')
                 filename = str(uuid.uuid4())
                 data = ContentFile(base64.b64decode(imgstr), name=filename + '.jpg') 
                 pictures = UpdateMessage(message_for=msg_id,update_image=data)
