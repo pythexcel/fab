@@ -371,7 +371,10 @@ class ChatMessages(APIView):
                 format,imgstr = image_data.split(';base64,')
                 filename = str(uuid.uuid4())
                 data = ContentFile(base64.b64decode(imgstr), name=filename + '.jpg') 
-                pictures = UpdateMessage.objects.create(message_for=msg_id,update_image=data)
+                pictures = UpdateMessage()
+                pictures.message_for_id = msg_id
+                pictures.update_image=data
+                pictures.save()
         devices = FCMDevice.objects.get(user=ser.data['id'])
         devices.send_message(title="Message", body=message,data={"sender_id":sender.id,"reciever_id":reciever.id})
         return Response("Message Sended", status=status.HTTP_201_CREATED)
