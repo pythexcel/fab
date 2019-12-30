@@ -102,7 +102,7 @@ class CreateBid(APIView):
     def post(self,request,format=None,exi_pk=None):
         user = self.request.user
         own_ser = UserDetailSerializer(user,many=False)
-        my_name = own_ser.data['name']
+        my_name = own_ser.data['company_name']
         for data in request.data['fab_ids']:
             fab_user = User.objects.get(pk=data,is_active=True)
             exhibhition = Exhibitor.objects.get(pk=exi_pk)
