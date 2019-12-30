@@ -364,6 +364,7 @@ class ChatMessages(APIView):
                            message=message)
         send_msg.save()
         msg_id = send_msg.id
+        link_image = None
         serialzier = MessageSerializer(send_msg, many=False)
         if request.data['shared_image']:
             for elem in request.data['shared_image']:
@@ -375,8 +376,12 @@ class ChatMessages(APIView):
                 pictures.message_for_id = msg_id
                 pictures.update_image=data
                 pictures.save()
+                im_data = UpdateMessage.objects.get(id=pictures.id)
+                ser_image = UpdateImages(pictures,many=False).data
+                link_image = "http://176.9.137.77:8004/" + ser_image['update_image']
+        print(link_image)        
         devices = FCMDevice.objects.get(user=ser.data['id'])
-        devices.send_message(title="Message", body=message,data={"sender_id":str(sender.id),"reciever_id":str(reciever.id)})
+        devices.send_message(title="Message",body=message,data={"sender_id":str(sender.id),"reciever_id":str(reciever.id),"image":link_image})
         return Response("Message Sended", status=status.HTTP_201_CREATED)
 
     def get(self, request, pk=None):
@@ -387,7 +392,6 @@ class ChatMessages(APIView):
 
         for message in messages:
             message.is_read = True
-
             message.save()
 
         serializer = MessageSerializer(messages, many=True)
