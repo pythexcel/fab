@@ -28,6 +28,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
+    company_address = models.CharField(max_length=500, null=True, blank=True)
     cron_review = models.BooleanField(default=False)
     avg_rating = models.IntegerField(null=True, blank=True)
     website_link = models.URLField(max_length=350, null=True, blank=True)
@@ -133,3 +134,11 @@ class Message(models.Model):
 
     class Meta:
         ordering = ('timestamp', )
+
+class UpdateMessage(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    message_for = models.ForeignKey(Message,
+                               on_delete=models.CASCADE,
+                               related_name='message_for')
+    update_image = models.ImageField(upload_to='images/')                           
+    timestamp = models.DateTimeField(auto_now_add=True)

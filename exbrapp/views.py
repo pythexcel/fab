@@ -99,29 +99,29 @@ class CreateBid(APIView):
         return Response(serializer.data)
 
 
-    def post(self,request,format=None,pk=None,exi_pk=None):
+    def post(self,request,format=None,exi_pk=None):
         user = self.request.user
         own_ser = UserDetailSerializer(user,many=False)
         my_name = own_ser.data['name']
-        fab_user = User.objects.get(pk=pk,is_active=True)
-        print(fab_user)
-        exhibhition = Exhibitor.objects.get(pk=exi_pk)
-        exi_ser = ExhibitorSerializer(exhibhition,many=False)
-        exhibition_name = exi_ser.data['exhibition']['exhibition_name']
-        print(exhibhition.id)
-        ser = UserDetailSerializer(fab_user,many=False)
-        devices = FCMDevice.objects.get(user=ser.data['id'])
-        devices.send_message(title="Notification",body="Notification from "+ my_name+ " You have beed Invited for "+ exhibition_name)
-        bid = Bid.objects.filter(fabs_user_id=fab_user.id,mine_exhib_id=exhibhition.id)
-        if not bid:
-            bid = Bid(fabs_user_id=fab_user.id,mine_exhib_id=exhibhition.id)
-            bid.save()
-            serializer = BidSerializer(bid, many=False)
+        for data in request.data['fab_ids']:
+            fab_user = User.objects.get(pk=data,is_active=True)
+            exhibhition = Exhibitor.objects.get(pk=exi_pk)
+            exi_ser = ExhibitorSerializer(exhibhition,many=False)
+            exhibition_name = exi_ser.data['exhibition']['exhibition_name']
+            print(exhibhition.id)
+            ser = UserDetailSerializer(fab_user,many=False)
             devices = FCMDevice.objects.get(user=ser.data['id'])
             devices.send_message(title="Notification",body="Notification from "+ my_name+ " You have beed Invited for "+ exhibition_name)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        else:
-            return Response({"is_already_added": True})
+            bid = Bid.objects.filter(fabs_user_id=fab_user.id,mine_exhib_id=exhibhition.id)
+            if not bid:
+                bid = Bid(fabs_user_id=fab_user.id,mine_exhib_id=exhibhition.id)
+                bid.save()
+                serializer = BidSerializer(bid, many=False)
+                devices = FCMDevice.objects.get(user=ser.data['id'])
+                devices.send_message(title="Notification",body="Notification from "+ my_name+ " You have beed Invited for "+ exhibition_name)
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            else:
+                return Response({"is_already_added": True})
 
     def put(self,request,format=None,pk=None):
         bid = Bid.objects.get(id=pk)
