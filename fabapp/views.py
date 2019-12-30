@@ -364,14 +364,14 @@ class ChatMessages(APIView):
                            message=message)
         send_msg.save()
         msg_id = send_msg.id
+        serialzier = MessageSerializer(send_msg, many=False)
         if request.data['shared_image']:
             for elem in request.data['shared_image']:
                 image_data = "data:image/gif;base64,"+elem
                 format,imgstr = image_data.split(';base64,')
                 filename = str(uuid.uuid4())
                 data = ContentFile(base64.b64decode(imgstr), name=filename + '.jpg') 
-                pictures = UpdateMessage(message_for=msg_id,update_image=data)
-        serialzier = MessageSerializer(send_msg, many=False)
+                pictures = UpdateMessage.objects.create(message_for=msg_id,update_image=data)
         devices = FCMDevice.objects.get(user=ser.data['id'])
         devices.send_message(title="Message", body=message,data={"sender_id":sender.id,"reciever_id":reciever.id})
         return Response("Message Sended", status=status.HTTP_201_CREATED)
