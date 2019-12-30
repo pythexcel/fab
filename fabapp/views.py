@@ -25,7 +25,7 @@ from exbrapp.serializers import BidSerializer
 from fabapp.authentication import CustomAuthentication
 from django.core.files.base import ContentFile
 import uuid
-
+import base64
 
 class Test(APIView):
     def get(self, requset):
