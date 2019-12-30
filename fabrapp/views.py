@@ -14,6 +14,7 @@ from exbrapp.serializers import BidSerializer
 import cloudinary.uploader
 import base64
 from django.core.files.base import ContentFile
+import uuid
 
 def modify_input_for_multiple_files(image):
     dict = {}
@@ -36,7 +37,8 @@ class FabricatorPortfolio(APIView):
         for img_name in images:
             image_data = "data:image/gif;base64,"+img_name['image']
             imgstr = image_data.split(';base64,')
-            data = ContentFile(base64.b64decode(imgstr), name='temp.' + 'jpg') 
+            filename = str(uuid.uuid4())
+            data = ContentFile(base64.b64decode(imgstr), name=filename + '.jpg') 
             md = Portfolio(user_id=self.request.user.id,image=data)
             md.save()
         return Response("Portfolio Added", status=status.HTTP_201_CREATED)

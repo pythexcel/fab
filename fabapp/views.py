@@ -19,10 +19,12 @@ from fabapp.serializers import (UserRegisterSerializer, UserDetailSerializer,
                                 ExhibitionSerializer, ExhibitFabricators,
                                 ExhibitionDetail, AvailBrandSerializer,
                                 AvailFurniSerializer, AvailProdSerializer,
-                                MessageSerializer)
+                                MessageSerializer,UpdateImages)
 from exbrapp.models import Bid
 from exbrapp.serializers import BidSerializer
 from fabapp.authentication import CustomAuthentication
+from django.core.files.base import ContentFile
+import uuid
 
 
 class Test(APIView):
@@ -352,6 +354,7 @@ class ChatMessages(APIView):
 
     def post(self, request,pk=None):    
         sender = self.request.user
+        
         message = request.data.get("message")
         reciever = User.objects.get(id=pk)
         ser = UserDetailSerializer(reciever,many=False)
@@ -360,9 +363,17 @@ class ChatMessages(APIView):
                            receiver_id=reciever.id,
                            message=message)
         send_msg.save()
+        msg_id = send_msg.id
+        if request.data['shared_image']:
+            for elem in request.data['shared_image']:
+                image_data = "data:image/gif;base64,"+elem
+                imgstr = image_data.split(';base64,')
+                filename = str(uuid.uuid4())
+                data = ContentFile(base64.b64decode(imgstr), name=filename + '.jpg') 
+                pictures = UpdateMessage(message_for=msg_id,update_image=data)
         serialzier = MessageSerializer(send_msg, many=False)
         devices = FCMDevice.objects.get(user=ser.data['id'])
-        devices.send_message(title="Message", body=message)
+        devices.send_message(title="Message", body=message,data={"sender_id":sender.id,"reciever_id":reciever.id})
         return Response("Message Sended", status=status.HTTP_201_CREATED)
 
     def get(self, request, pk=None):
@@ -370,13 +381,24 @@ class ChatMessages(APIView):
         reciever = User.objects.get(id=pk)
         messages = Message.objects.filter(sender_id=reciever.id,
                                           receiver_id=sender.id)
+
         for message in messages:
             message.is_read = True
+
             message.save()
+
         serializer = MessageSerializer(messages, many=True)
+        for elem in serializer.data:
+            sh_images = UpdateMessage.objects.filter(message_for=elem['id'])
+            sh_images_serial = UpdateImages(sh_images,many=True)
+            elem['shared_images'] = sh_images_serial.data
         my_msg = Message.objects.filter(sender_id=sender.id,
                                         receiver_id=reciever.id)
         serial = MessageSerializer(my_msg, many=True)
+        for detail in serial.data:
+            sh_image = UpdateMessage.objects.filter(message_for=detail['id'])
+            sh_image_serial = UpdateImages(sh_image,many=True)
+            detail['shared_images'] = sh_image_serial.data
         total = serializer.data + serial.data
         return JsonResponse(total, safe=False)
 

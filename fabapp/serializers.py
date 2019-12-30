@@ -1,5 +1,5 @@
 from fabapp.models import (User, Exhibition, ExhibitFab, AvailBrand,
-                           AvailFurni, AvailProd,Message)
+                           AvailFurni, AvailProd,Message,UpdateMessage)
 from rest_framework import serializers
 from drf_extra_fields.fields import Base64ImageField
 from django.contrib.auth.hashers import make_password
@@ -147,3 +147,8 @@ class MessageSerializer(serializers.ModelSerializer):
         print(validated_data)
         user = Message.objects.create(**validated_data)
         return user
+
+class UpdateImages(serializers.ModelSerializer):
+    class Meta:
+        model = UpdateMessage
+        fields = '__all__'
