@@ -376,7 +376,7 @@ class ChatMessages(APIView):
                 pictures.update_image=data
                 pictures.save()
         devices = FCMDevice.objects.get(user=ser.data['id'])
-        devices.send_message(title="Message", body=message,data={"sender_id":sender.id,"reciever_id":reciever.id})
+        devices.send_message(title="Message", body=message,data={"sender_id":str(sender.id),"reciever_id":str(reciever.id)})
         return Response("Message Sended", status=status.HTTP_201_CREATED)
 
     def get(self, request, pk=None):
