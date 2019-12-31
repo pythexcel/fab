@@ -129,7 +129,7 @@ class CreateBid(APIView):
         if confirm:
             return Response({"success":True})
         if existed:
-            return Response({"Message": "already sended to {}".format(",".join(existed))})
+            return Response({"Message": "Bid already sended to {}".format(",".join(existed))})
 
 
     def put(self,request,format=None,pk=None):
