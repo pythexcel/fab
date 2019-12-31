@@ -7,6 +7,7 @@ from django.contrib.auth.models import PermissionsMixin
 from django.conf import settings
 from phonenumber_field.modelfields import PhoneNumberField
 from cloudinary.models import CloudinaryField
+from exbrapp.models import Exhibitor
 
 
 class User(AbstractBaseUser, PermissionsMixin):
@@ -126,6 +127,9 @@ class Message(models.Model):
                                  on_delete=models.CASCADE,
                                  related_name='receiver')
     message = models.CharField(max_length=1200)
+    exhibition_requst = models.ForeignKey(Exhibitor,
+                                 on_delete=models.CASCADE,
+                                 related_name='exibition_req')
     timestamp = models.DateTimeField(auto_now_add=True)
     is_read = models.BooleanField(default=False)
     

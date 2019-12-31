@@ -20,7 +20,7 @@ from fabapp.serializers import (UserRegisterSerializer, UserDetailSerializer,
                                 ExhibitionDetail, AvailBrandSerializer,
                                 AvailFurniSerializer, AvailProdSerializer,
                                 MessageSerializer, UpdateImages)
-from exbrapp.models import Bid
+from exbrapp.models import Bid,Exhibitor
 from exbrapp.serializers import BidSerializer
 from fabapp.authentication import CustomAuthentication
 from django.core.files.base import ContentFile
@@ -360,19 +360,19 @@ class listItem(APIView):
 class ChatMessages(APIView):
     permission_classes = (IsAuthenticated, )
 
-    def post(self, request, pk=None):
+    def post(self, request, pk=None,pk_exi=None):
         sender = self.request.user
-
+        exi_req = Exhibitor.objects.get(id=pk_exi)
         message = request.data.get("message")
         reciever = User.objects.get(id=pk)
         ser = UserDetailSerializer(reciever, many=False)
 
         send_msg = Message(sender_id=sender.id,
                            receiver_id=reciever.id,
+                           exhibition_requst_id = exi_req.id,
                            message=message)
         send_msg.save()
         msg_id = send_msg.id
-        link_image = None
         serialzier = MessageSerializer(send_msg, many=False)
         if request.data['shared_image']:
             for elem in request.data['shared_image']:
@@ -387,24 +387,23 @@ class ChatMessages(APIView):
                 pictures.save()
                 im_data = UpdateMessage.objects.get(id=pictures.id)
                 ser_image = UpdateImages(pictures, many=False).data
-                link_image = "http://176.9.137.77:8004/" + ser_image[
-                    'update_image']
-        print(link_image)
+
         devices = FCMDevice.objects.get(user=ser.data['id'])
         devices.send_message(title="Message",
                              body=message,
                              data={
                                  "sender_id": str(sender.id),
-                                 "reciever_id": str(reciever.id),
-                                 "image": link_image
+                                 "reciever_id": str(reciever.id)
                              })
         return Response("Message Sended", status=status.HTTP_201_CREATED)
 
-    def get(self, request, pk=None):
+    def get(self, request, pk=None,pk_exi=None):
+        exi_req = Exhibitor.objects.get(id=pk_exi)
         sender = self.request.user
         reciever = User.objects.get(id=pk)
         messages = Message.objects.filter(sender_id=reciever.id,
-                                          receiver_id=sender.id)
+                                          receiver_id=sender.id,
+                                          exhibition_requst_id = exi_req.id)
 
         for message in messages:
             message.is_read = True

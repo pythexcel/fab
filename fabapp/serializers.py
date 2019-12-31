@@ -137,6 +137,7 @@ class AvailFurniSerializer(serializers.ModelSerializer):
 class MessageSerializer(serializers.ModelSerializer):
     sender_id = serializers.IntegerField(write_only=True)
     receiver_id = serializers.IntegerField(write_only=True)
+    exhibition_requst_id = serializers.IntegerField(write_only=True)
 
     class Meta:
         model = Message
