@@ -37,7 +37,6 @@ class UserRegisterSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         instance.__dict__.update(validated_data)
-        print(validated_data)
         if 'profile_image'in validated_data:
             instance.profile_image = validated_data.get('profile_image',instance.profile_image)
         else:

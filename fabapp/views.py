@@ -19,13 +19,14 @@ from fabapp.serializers import (UserRegisterSerializer, UserDetailSerializer,
                                 ExhibitionSerializer, ExhibitFabricators,
                                 ExhibitionDetail, AvailBrandSerializer,
                                 AvailFurniSerializer, AvailProdSerializer,
-                                MessageSerializer,UpdateImages)
+                                MessageSerializer, UpdateImages)
 from exbrapp.models import Bid
 from exbrapp.serializers import BidSerializer
 from fabapp.authentication import CustomAuthentication
 from django.core.files.base import ContentFile
 import uuid
 import base64
+
 
 class Test(APIView):
     def get(self, requset):
@@ -53,7 +54,7 @@ class UserRegister(APIView):
                 return Response(
                     {
                         "token": token.key,
-                        "Role": role,
+                        "role": role,
                         "error": False
                     },
                     status=status.HTTP_201_CREATED)
@@ -67,14 +68,17 @@ class UserAuth(APIView):
     def post(self, request):
         fcm = request.data.get("fcm_token")
         if fcm is None:
-            return Response({"Message": "Please provide a fcm token","error": True})
+            return Response({
+                "Message": "Please provide a fcm token",
+                "error": True
+            })
         email = None
         phone = None
         if 'email' in request.data:
             if request.data['email'] != "":
                 email = request.data['email']
             else:
-                pass        
+                pass
         if 'phone' in request.data:
             if request.data['phone'] != "":
                 phone = request.data['phone']
@@ -82,9 +86,13 @@ class UserAuth(APIView):
                 pass
         if email is None:
             if phone is None:
-                return Response({"Message": "Please enter email or phone no","error": True})
-        # if email is not None:         
-        user = CustomAuthentication().authenticate(email=email,phone=phone,password=request.data.get("password"))
+                return Response({
+                    "Message": "Please enter email or phone no",
+                    "error": True
+                })
+        # if email is not None:
+        user = CustomAuthentication().authenticate(
+            email=email, phone=phone, password=request.data.get("password"))
         # else:
         #     user = CustomAuthentication().authenticate(email=email,phone=phone,password=request.data.get("password"))
         if user is not None:
@@ -352,12 +360,12 @@ class listItem(APIView):
 class ChatMessages(APIView):
     permission_classes = (IsAuthenticated, )
 
-    def post(self, request,pk=None):    
+    def post(self, request, pk=None):
         sender = self.request.user
-        
+
         message = request.data.get("message")
         reciever = User.objects.get(id=pk)
-        ser = UserDetailSerializer(reciever,many=False)
+        ser = UserDetailSerializer(reciever, many=False)
 
         send_msg = Message(sender_id=sender.id,
                            receiver_id=reciever.id,
@@ -368,20 +376,28 @@ class ChatMessages(APIView):
         serialzier = MessageSerializer(send_msg, many=False)
         if request.data['shared_image']:
             for elem in request.data['shared_image']:
-                image_data = "data:image/gif;base64,"+elem
-                format,imgstr = image_data.split(';base64,')
+                image_data = "data:image/gif;base64," + elem
+                format, imgstr = image_data.split(';base64,')
                 filename = str(uuid.uuid4())
-                data = ContentFile(base64.b64decode(imgstr), name=filename + '.jpg') 
+                data = ContentFile(base64.b64decode(imgstr),
+                                   name=filename + '.jpg')
                 pictures = UpdateMessage()
                 pictures.message_for_id = msg_id
-                pictures.update_image=data
+                pictures.update_image = data
                 pictures.save()
                 im_data = UpdateMessage.objects.get(id=pictures.id)
-                ser_image = UpdateImages(pictures,many=False).data
-                link_image = "http://176.9.137.77:8004/" + ser_image['update_image']
-        print(link_image)        
+                ser_image = UpdateImages(pictures, many=False).data
+                link_image = "http://176.9.137.77:8004/" + ser_image[
+                    'update_image']
+        print(link_image)
         devices = FCMDevice.objects.get(user=ser.data['id'])
-        devices.send_message(title="Message",body=message,data={"sender_id":str(sender.id),"reciever_id":str(reciever.id),"image":link_image})
+        devices.send_message(title="Message",
+                             body=message,
+                             data={
+                                 "sender_id": str(sender.id),
+                                 "reciever_id": str(reciever.id),
+                                 "image": link_image
+                             })
         return Response("Message Sended", status=status.HTTP_201_CREATED)
 
     def get(self, request, pk=None):
@@ -397,14 +413,14 @@ class ChatMessages(APIView):
         serializer = MessageSerializer(messages, many=True)
         for elem in serializer.data:
             sh_images = UpdateMessage.objects.filter(message_for=elem['id'])
-            sh_images_serial = UpdateImages(sh_images,many=True)
+            sh_images_serial = UpdateImages(sh_images, many=True)
             elem['shared_images'] = sh_images_serial.data
         my_msg = Message.objects.filter(sender_id=sender.id,
                                         receiver_id=reciever.id)
         serial = MessageSerializer(my_msg, many=True)
         for detail in serial.data:
             sh_image = UpdateMessage.objects.filter(message_for=detail['id'])
-            sh_image_serial = UpdateImages(sh_image,many=True)
+            sh_image_serial = UpdateImages(sh_image, many=True)
             detail['shared_images'] = sh_image_serial.data
         total = serializer.data + serial.data
         return JsonResponse(total, safe=False)

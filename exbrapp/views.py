@@ -102,26 +102,35 @@ class CreateBid(APIView):
     def post(self,request,format=None,exi_pk=None):
         user = self.request.user
         own_ser = UserDetailSerializer(user,many=False)
-        my_name = own_ser.data['name']
+        my_name = own_ser.data['company_name']
+        existed = []
+        confirm = []
         for data in request.data['fab_ids']:
             fab_user = User.objects.get(pk=data,is_active=True)
             exhibhition = Exhibitor.objects.get(pk=exi_pk)
             exi_ser = ExhibitorSerializer(exhibhition,many=False)
             exhibition_name = exi_ser.data['exhibition']['exhibition_name']
-            print(exhibhition.id)
             ser = UserDetailSerializer(fab_user,many=False)
             devices = FCMDevice.objects.get(user=ser.data['id'])
             devices.send_message(title="Notification",body="Notification from "+ my_name+ " You have beed Invited for "+ exhibition_name)
             bid = Bid.objects.filter(fabs_user_id=fab_user.id,mine_exhib_id=exhibhition.id)
             if not bid:
+                confirm.append(fab_user.company_name)
                 bid = Bid(fabs_user_id=fab_user.id,mine_exhib_id=exhibhition.id)
                 bid.save()
                 serializer = BidSerializer(bid, many=False)
                 devices = FCMDevice.objects.get(user=ser.data['id'])
                 devices.send_message(title="Notification",body="Notification from "+ my_name+ " You have beed Invited for "+ exhibition_name)
-                return Response(serializer.data, status=status.HTTP_201_CREATED)
             else:
-                return Response({"is_already_added": True})
+                existed.append(fab_user.company_name)
+        if confirm:
+            if existed:
+                return Response({"success":True,"Message": "already sended to {}".format(",".join(existed))})
+        if confirm:
+            return Response({"success":True})
+        if existed:
+            return Response({"Message": "already sended to {}".format(",".join(existed))})
+
 
     def put(self,request,format=None,pk=None):
         bid = Bid.objects.get(id=pk)
