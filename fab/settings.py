@@ -12,7 +12,7 @@ SECRET_KEY = '%=r3#altd4m)_%_y7)y$xu+1bb&7ms!kd2h@vb-j*6jw38kkx6'
 
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True 
+DEBUG = False
 
 
 # cloudinary.config(cloud_name=config('cloud_name'),
