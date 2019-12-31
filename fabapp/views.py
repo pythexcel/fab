@@ -4,13 +4,13 @@ from rest_framework.views import APIView
 from cloudinary.templatetags import cloudinary
 from rest_framework.authtoken.models import Token
 from rest_framework.parsers import MultiPartParser, FormParser, FileUploadParser
-from fabapp.models import User, Exhibition, ExhibitFab, AvailBrand, AvailProd, AvailFurni, Message, UpdateMessage
+from fabapp.models import User, Exhibition, ExhibitFab, AvailBrand, AvailProd, AvailFurni
 from rest_framework import status
 from django.http import JsonResponse
 from django.contrib.auth import authenticate
 from rest_framework.parsers import MultiPartParser, FormParser, FileUploadParser
 from rest_framework.response import Response
-from exbrapp.models import Exhibitor
+from exbrapp.models import Exhibitor, Message, UpdateMessage
 from exbrapp.serializers import ExhibitorSerializer
 from fabrapp.models import Portfolio
 from fabrapp.serializers import FabricatorSerializer

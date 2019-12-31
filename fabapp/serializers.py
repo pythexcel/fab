@@ -1,5 +1,6 @@
 from fabapp.models import (User, Exhibition, ExhibitFab, AvailBrand,
-                           AvailFurni, AvailProd,Message,UpdateMessage)
+                           AvailFurni, AvailProd)
+from exbrapp.models import Message,UpdateMessage                           
 from rest_framework import serializers
 from drf_extra_fields.fields import Base64ImageField
 from django.contrib.auth.hashers import make_password
@@ -137,7 +138,7 @@ class AvailFurniSerializer(serializers.ModelSerializer):
 class MessageSerializer(serializers.ModelSerializer):
     sender_id = serializers.IntegerField(write_only=True)
     receiver_id = serializers.IntegerField(write_only=True)
-    exhibition_requst_id = serializers.IntegerField(write_only=True)
+    # exhibition_request_id = serializers.IntegerField(write_only=True)
 
     class Meta:
         model = Message
