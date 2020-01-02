@@ -197,23 +197,24 @@ class Userprofile(APIView):
         serial = FabricatorSerializer(portfolio, many=True)
         exi_bid = Bid.objects.filter(mine_exhib__user__id=request.user.id)
         exi_bid_serial = BidSerializer(exi_bid, many=True)
-        fab_bid = Bid.objects.filter(fabs_user_id=request.user.id,
-                                     work_status=False)
+        fab_bid = Bid.objects.filter(fabs_user_id="6320307b-6ac2-433d-ae6f-b4512a0eb3b7",
+                                     work_status=False)                             
         fab_bid_serial = BidSerializer(fab_bid, many=True)
         qoutes_data = []
-        for data in fab_bid_serial.data:
-            quotes_dict = {}
-            user_data = User.objects.get(id=data['fabs_user'])
-            user_data_serial= UserDetailSerializer(user_data,many=False).data
-            data['user_company_name'] = user_data_serial['company_name']
-            data['user_email'] = user_data_serial['email']
-            data['phone'] = user_data_serial['phone']
-            data['bid_id'] = data['id']
-            quote = Exhibitor.objects.get(id=data['mine_exhib'])
-            quote_serial= ExhibitorSerializer(quote,many=False).data
-            quotes_dict.update(data)
-            quotes_dict.update(quote_serial)
-            qoutes_data.append(quotes_dict)
+        if fab_bid_serial.data is not None:
+            for data in fab_bid_serial.data:
+                quotes_dict = {}
+                user_data = User.objects.get(id=data['fabs_user'])
+                user_data_serial= UserDetailSerializer(user_data,many=False).data
+                data['user_company_name'] = user_data_serial['company_name']
+                data['user_email'] = user_data_serial['email']
+                data['phone'] = user_data_serial['phone']
+                data['bid_id'] = data['id']
+                quote = Exhibitor.objects.get(id=data['mine_exhib'])
+                quote_serial= ExhibitorSerializer(quote,many=False).data
+                quotes_dict.update(data)
+                quotes_dict.update(quote_serial)
+                qoutes_data.append(quotes_dict)
 
 
         return Response([
