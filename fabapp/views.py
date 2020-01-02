@@ -204,7 +204,7 @@ class Userprofile(APIView):
         serial = FabricatorSerializer(portfolio, many=True)
         exi_bid = Bid.objects.filter(mine_exhib__user__id=request.user.id)
         exi_bid_serial = BidSerializer(exi_bid, many=True)
-        fab_bid = Bid.objects.filter(fabs_user_id="6320307b-6ac2-433d-ae6f-b4512a0eb3b7",
+        fab_bid = Bid.objects.filter(fabs_user_id=self.request.user.id,
                                      work_status=False)                             
         fab_bid_serial = BidSerializer(fab_bid, many=True)
         qoutes_data = []
