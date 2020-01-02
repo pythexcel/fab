@@ -159,6 +159,20 @@ class Userprofile(APIView):
         fab_bid = Bid.objects.filter(fabs_user_id=request.user.id,
                                      work_status=False)
         fab_bid_serial = BidSerializer(fab_bid, many=True)
+        qoutes_data = []
+        for data in fab_bid_serial.data:
+            quotes_dict = {}
+            user_data = User.objects.get(id=data['fabs_user'])
+            user_data_serial= UserDetailSerializer(user_data,many=False).data
+            data['user_company_name'] = user_data_serial['company_name']
+            data['user_email'] = user_data_serial['email']
+            data['phone'] = user_data_serial['phone']
+            quote = Exhibitor.objects.get(id=data['mine_exhib'])
+            quote_serial= ExhibitorSerializer(quote,many=False).data
+            quotes_dict.update(data)
+            quotes_dict.update(quote_serial)
+            qoutes_data.append(quotes_dict)
+
 
         return Response([
             ser.data, {
@@ -168,7 +182,7 @@ class Userprofile(APIView):
             }, {
                 "Exhibitor_bid_request": exi_bid_serial.data
             }, {
-                "Fabricator_bid_request": fab_bid_serial.data
+                "Fabricator_bid_request": qoutes_data
             }
         ])
 

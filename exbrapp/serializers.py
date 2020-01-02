@@ -20,15 +20,6 @@ class BrandingDetail(serializers.ModelSerializer):
         model = BrandingExhibitorDetail
         fields = ('id', 'branding','quantity')
 
-
-# class ProductDetail(serializers.ModelSerializer):
-#     id = serializers.IntegerField(required=False)
-
-#     class Meta:
-#         model = ProductExhibitorDetail
-#         fields = ('id', 'product','quantity')
-
-
 class ExhibitorSerializer(serializers.ModelSerializer):
     furnitures = FurnituredDetail(many=True)
     brandings = BrandingDetail(many=True)
@@ -98,30 +89,11 @@ class ExhibitorSerializer(serializers.ModelSerializer):
                 else:
                     brd_data = BrandingExhibitorDetail.objects.create(
                         **elem, brandings=instance)
-        
-        # if 'products' in validated_data:
-        #     product_data = validated_data.get('products')
-            
-        #     detail_id = product_data.get('id', None)
-            
-        #     if detail_id:
-                
-        #         pro_data = ProductExhibitorDetail.objects.get(
-        #             id=detail_id, products=instance)
-        #         print(pro_data)  
-        #         pro_data.product = detail.get('product', pro_data.product)
-        #         pro_data.quantity = detail.get('quantity', pro_data.quantity)
-        #         print(pro_data.product)
-                
-        #         pro_data.save()
-        #     else:
-        #         pro_data = ProductExhibitorDetail.objects.create(
-        #             **detail, products=instance)
                     
         return instance
 
 class BidSerializer(serializers.ModelSerializer):
-    mine_exhib = ExhibitorSerializer(many=False)
+    # mine_exhib = ExhibitorSerializer(many=False)
     class Meta:
         model = Bid
         fields = '__all__'
