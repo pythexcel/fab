@@ -24,6 +24,7 @@ from exbrapp.models import Bid,Exhibitor
 from exbrapp.serializers import BidSerializer
 from fabapp.authentication import CustomAuthentication
 from django.core.files.base import ContentFile
+from django.contrib.auth.hashers import make_password
 import uuid
 import base64
 
@@ -31,6 +32,47 @@ import base64
 class Test(APIView):
     def get(self, requset):
         return Response("Working")
+
+
+class UserPassword(APIView):
+    def post(self, request):
+        email = None
+        phone = None
+        if 'email' in request.data:
+            if request.data['email'] != "":
+                email = request.data['email']
+            else:
+                pass
+        if 'phone' in request.data:
+            if request.data['phone'] != "":
+                phone = request.data['phone']
+            else:
+                pass
+        if email is None:
+            if phone is None:
+                return Response({
+                    "Message": "Please enter email or phone no",
+                    "error": True
+                })
+        try:
+            if email is not None:
+                user = User.objects.get(email=email) 
+            else:
+                user = User.objects.get(phone=phone)    
+        except User.DoesNotExist:
+            user = None
+        if user is not None:
+            user.password = make_password(request.data['password'])    
+            user.save()
+            return Response({
+                "error": False, "Message": "Password updated"
+            })
+
+        else:    
+            return Response({
+                "error": True, "Message": "User not exist"
+            })
+
 
 
 class UserRegister(APIView):
@@ -182,7 +224,7 @@ class Userprofile(APIView):
             }, {
                 "Exhibitor_bid_request": exi_bid_serial.data
             }, {
-                "Fabricator_bid_request": qoutes_data
+                "Fabricator_bid_request": fab_bid_serial.data
             }
         ])
 

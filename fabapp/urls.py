@@ -6,6 +6,7 @@ urlpatterns = [
     url('test', views.Test.as_view()),
     url('register', views.UserRegister.as_view()),
     url('login', views.UserAuth.as_view()),
+    url('forget_password', views.UserPassword.as_view()),
     url('profile', views.Userprofile.as_view()),
     url('profile/<uuid:pk>', views.Userprofile.as_view()),
     url('listexhbiton',views.ListExhibhition.as_view()),
