@@ -208,10 +208,9 @@ class Userprofile(APIView):
             data['user_company_name'] = user_data_serial['company_name']
             data['user_email'] = user_data_serial['email']
             data['phone'] = user_data_serial['phone']
+            data['bid_id'] = data['id']
             quote = Exhibitor.objects.get(id=data['mine_exhib'])
-            print(quote)
             quote_serial= ExhibitorSerializer(quote,many=False).data
-            print
             quotes_dict.update(data)
             quotes_dict.update(quote_serial)
             qoutes_data.append(quotes_dict)
