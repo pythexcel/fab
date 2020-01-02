@@ -21,7 +21,7 @@ from fabapp.serializers import (UserRegisterSerializer, UserDetailSerializer,
                                 AvailFurniSerializer, AvailProdSerializer,
                                 MessageSerializer, UpdateImages)
 from exbrapp.models import Bid,Exhibitor
-from exbrapp.serializers import BidSerializer
+from exbrapp.serializers import BidSerializer,BidDetailSerializer
 from fabapp.authentication import CustomAuthentication
 from django.core.files.base import ContentFile
 from django.contrib.auth.hashers import make_password
@@ -206,7 +206,7 @@ class Userprofile(APIView):
         exi_bid_serial = BidSerializer(exi_bid, many=True)
         fab_bid = Bid.objects.filter(fabs_user_id=self.request.user.id,
                                      work_status=False)                             
-        fab_bid_serial = BidSerializer(fab_bid, many=True)
+        fab_bid_serial = BidDetailSerializer(fab_bid, many=True)
         qoutes_data = []
         if fab_bid_serial.data is not None:
             for data in fab_bid_serial.data:

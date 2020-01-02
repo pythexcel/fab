@@ -93,7 +93,12 @@ class ExhibitorSerializer(serializers.ModelSerializer):
         return instance
 
 class BidSerializer(serializers.ModelSerializer):
-    # mine_exhib = ExhibitorSerializer(many=False)
+    fabs_user = UserDetailSerializer(many=False)
     class Meta:
         model = Bid
         fields = '__all__'
+
+class BidDetailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Bid
+        fields = '__all__'        
