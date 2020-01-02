@@ -369,8 +369,9 @@ class ChatMessages(APIView):
 
         send_msg = Message(sender_id=sender.id,
                            receiver_id=reciever.id,
-                           exhibition_requst_id = exi_req.id,
+                           exhibition_request_id = exi_req.id,
                            message=message)
+        
         send_msg.save()
         msg_id = send_msg.id
         serialzier = MessageSerializer(send_msg, many=False)
@@ -387,6 +388,11 @@ class ChatMessages(APIView):
                 pictures.save()
                 im_data = UpdateMessage.objects.get(id=pictures.id)
                 ser_image = UpdateImages(pictures, many=False).data
+        send_msg_serial = MessageSerializer(send_msg,many=False).data
+        for detail in send_msg_serial:
+            sh_image = UpdateMessage.objects.filter(message_for=detail['id'])
+            sh_image_serial = UpdateImages(sh_image, many=True)
+            detail['shared_images'] = sh_image_serial.data
 
         devices = FCMDevice.objects.get(user=ser.data['id'])
         devices.send_message(title="Message",
@@ -395,7 +401,7 @@ class ChatMessages(APIView):
                                  "sender_id": str(sender.id),
                                  "reciever_id": str(reciever.id)
                              })
-        return Response("Message Sended", status=status.HTTP_201_CREATED)
+        return Response(send_msg_serial, status=status.HTTP_201_CREATED)
 
     def get(self, request, pk=None,pk_exi=None):
         exi_req = Exhibitor.objects.get(id=pk_exi)
@@ -403,7 +409,7 @@ class ChatMessages(APIView):
         reciever = User.objects.get(id=pk)
         messages = Message.objects.filter(sender_id=reciever.id,
                                           receiver_id=sender.id,
-                                          exhibition_requst_id = exi_req.id)
+                                          exhibition_request_id = exi_req.id)
 
         for message in messages:
             message.is_read = True

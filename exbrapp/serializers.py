@@ -122,7 +122,6 @@ class ExhibitorSerializer(serializers.ModelSerializer):
 
 class BidSerializer(serializers.ModelSerializer):
     mine_exhib = ExhibitorSerializer(many=False)
-    fabs_user = UserDetailSerializer(many=False)
     class Meta:
         model = Bid
         fields = '__all__'
