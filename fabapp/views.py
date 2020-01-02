@@ -210,7 +210,9 @@ class Userprofile(APIView):
             data['user_email'] = user_data_serial['email']
             data['phone'] = user_data_serial['phone']
             quote = Exhibitor.objects.get(id=data['mine_exhib'])
+            print(quote)
             quote_serial= ExhibitorSerializer(quote,many=False).data
+            print
             quotes_dict.update(data)
             quotes_dict.update(quote_serial)
             qoutes_data.append(quotes_dict)
@@ -224,7 +226,7 @@ class Userprofile(APIView):
             }, {
                 "Exhibitor_bid_request": exi_bid_serial.data
             }, {
-                "Fabricator_bid_request": fab_bid_serial.data
+                "Fabricator_bid_request": qoutes_data
             }
         ])
 
