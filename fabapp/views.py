@@ -35,44 +35,43 @@ class Test(APIView):
 
 
 class UserPassword(APIView):
+
+    permission_classes = (IsAuthenticated, )
+
     def post(self, request):
-        email = None
-        phone = None
-        if 'email' in request.data:
-            if request.data['email'] != "":
-                email = request.data['email']
-            else:
-                pass
-        if 'phone' in request.data:
-            if request.data['phone'] != "":
-                phone = request.data['phone']
-            else:
-                pass
-        if email is None:
-            if phone is None:
+        if 'user_info' in request.data:
+            if request.data['user_info'] == "":
                 return Response({
-                    "Message": "Please enter email or phone no",
-                    "error": True
-                })
-        try:
-            if email is not None:
-                user = User.objects.get(email=email) 
+                "error": True, "Message": "Please enter user detail"
+            })
             else:
-                user = User.objects.get(phone=phone)    
-        except User.DoesNotExist:
-            user = None
-        if user is not None:
-            user.password = make_password(request.data['password'])    
-            user.save()
-            return Response({
-                "error": False, "Message": "Password updated"
-            })
-
-        else:    
-            return Response({
-                "error": True, "Message": "User not exist"
-            })
-
+                mail = ""
+                phone = ""
+                try:
+                    user = User.objects.get(email=request.data['user_info']) 
+                except User.DoesNotExist:
+                    mail = None
+                if mail is None:
+                    try:
+                        user = User.objects.get(phone=request.data['user_info']) 
+                    except User.DoesNotExist:
+                        phone = None
+                    if mail is None:
+                        if phone is None:
+                            return Response({
+                                "error": True, "Message": "User not exist"
+                            })    
+                    user.password = make_password(request.data['password'])        
+                    user.save()
+                    return Response ({"error":False,"Message": "Password updated"})
+                else:    
+                    user.password = make_password(request.data['password'])        
+                    user.save()
+                    return Response ({"error":False,"Message": "Password updated"})
+                    
+        return Response({
+            "error": True, "Message": "No key user_info given"
+        })
 
 
 class UserRegister(APIView):
