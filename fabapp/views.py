@@ -60,14 +60,21 @@ class UserPassword(APIView):
                         if phone is None:
                             return Response({
                                 "error": True, "Message": "User not exist"
-                            })    
-                    user.password = make_password(request.data['password'])        
-                    user.save()
-                    return Response ({"error":False,"Message": "Password updated"})
-                else:    
-                    user.password = make_password(request.data['password'])        
-                    user.save()
-                    return Response ({"error":False,"Message": "Password updated"})
+                            })   
+                    if user.id == self.request.user.id:         
+                        user.password = make_password(request.data['password'])        
+                        user.save()
+                        return Response ({"error":False,"Message": "Password updated"})
+                    else:
+                        return Response ({"error":False,"Message": "Invalid user"})
+
+                else:
+                    if user.id == self.request.user.id:         
+                        user.password = make_password(request.data['password'])        
+                        user.save()
+                        return Response ({"error":False,"Message": "Password updated"})
+                    else:
+                        return Response ({"error":False,"Message": "Invalid user"})
                     
         return Response({
             "error": True, "Message": "No key user_info given"
