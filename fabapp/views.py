@@ -456,7 +456,7 @@ class ChatMessages(APIView):
         
         sh_image = UpdateMessage.objects.filter(message_for=send_msg_serial['id'])
         sh_image_serial = UpdateImages(sh_image, many=True)
-       send_msg_serial['shared_images'] = sh_image_serial.data
+        send_msg_serial['shared_images'] = sh_image_serial.data
 
         devices = FCMDevice.objects.get(user=ser.data['id'])
         devices.send_message(title="Message",
