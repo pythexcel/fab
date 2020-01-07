@@ -24,18 +24,14 @@ def UserRating():
 
 
 def CronReset():
-    print("Reset schduler start....")
     rv = User.objects.filter(cron_review=True,is_active=True).update(cron_review=False)
-    if rv:
-        print('Cron Reset')    
+    if rv:    
     else:
         pass        
 
 def DisableExi():
-    print("Exhibition disable schduler running....")
     dis =  Exhibition.objects.filter(end_date__lt=timezone.now()).update(Running_status=False)
     if dis:
-        print("Exhibition Disable")
     else:
         pass
 

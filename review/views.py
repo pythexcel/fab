@@ -26,6 +26,7 @@ class UserReviewDeails(APIView):
         rating = request.data.get("rating")
         user_one = self.request.user
         user_two = User.objects.get(id=pk)
+        reviewed = Review.objects.filter(user_id=user_one.id,rated_user_id=user_two.id).delete()
         review = Review(user_id=user_one.id,rated_user_id=user_two.id,rating=rating)
         review.save()
         return Response({"Message":"Rating submitted"})
