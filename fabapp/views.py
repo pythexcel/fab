@@ -453,10 +453,10 @@ class ChatMessages(APIView):
                 im_data = UpdateMessage.objects.get(id=pictures.id)
                 ser_image = UpdateImages(pictures, many=False).data
         send_msg_serial = MessageSerializer(send_msg,many=False).data
-        for detail in send_msg_serial:
-            sh_image = UpdateMessage.objects.filter(message_for=detail['id'])
-            sh_image_serial = UpdateImages(sh_image, many=True)
-            detail['shared_images'] = sh_image_serial.data
+        
+        sh_image = UpdateMessage.objects.filter(message_for=send_msg_serial['id'])
+        sh_image_serial = UpdateImages(sh_image, many=True)
+        send_msg_serial['shared_images'] = sh_image_serial.data
 
         devices = FCMDevice.objects.get(user=ser.data['id'])
         devices.send_message(title="Message",

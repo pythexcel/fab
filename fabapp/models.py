@@ -85,36 +85,19 @@ class ExhibitFab(models.Model):
 
 class AvailProd(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    user = models.ForeignKey(User,
-                             related_name='admin_prod',
-                             blank=True,
-                             null=True,
-                             on_delete=models.CASCADE)
-
-    product = models.TextField()
+    product =  models.CharField(max_length=800, null=True, blank=True)
     selected = models.BooleanField(default=False)
 
 
 class AvailBrand(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    user = models.ForeignKey(User,
-                             related_name='admin_brand',
-                             blank=True,
-                             null=True,
-                             on_delete=models.CASCADE)
-
-    branding = models.TextField()
+    branding = models.CharField(max_length=800, null=True, blank=True)
     selected = models.BooleanField(default=False)
 
 
 class AvailFurni(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    user = models.ForeignKey(User,
-                             related_name='admin_furni',
-                             blank=True,
-                             null=True,
-                             on_delete=models.CASCADE)
-    furniture = models.TextField()
+    furniture =  models.CharField(max_length=800, null=True, blank=True)
     selected = models.BooleanField(default=False)
 
 
