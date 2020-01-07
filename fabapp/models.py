@@ -53,6 +53,7 @@ class Exhibition(models.Model):
                              on_delete=models.CASCADE)
     exhibition_name = models.CharField(max_length=350)
     exhibition_image = models.ImageField(upload_to='images/')
+    exhibition_layout = models.ImageField(upload_to='images/')
     Description = models.CharField(max_length=8000, null=True, blank=True)
     Start_date = models.DateTimeField('start_date',
                                       default=timezone.now,
