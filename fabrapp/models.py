@@ -10,4 +10,4 @@ class Portfolio(models.Model):
                              blank=True,
                              null=True,
                              on_delete=models.CASCADE)
-    image = CloudinaryField ('image')
+    image = models.ImageField(upload_to='images/')

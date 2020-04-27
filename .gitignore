@@ -4,6 +4,7 @@ env
 /fabapp/migrations
 .vscode
 .env
+fabenv
 media
 /exbrapp/__pycache__
 /exbrapp/migrations
