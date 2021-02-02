@@ -107,9 +107,9 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'fab',
-        'USER': 'root',
-        'PASSWORD': 'java@123',  #java@123
-        'HOST': '176.9.137.77',
+        'USER': 'dbuser',
+        'PASSWORD': 'dbuser@123',
+        'HOST': 'localhost',
         'PORT': '3306',
     }
 }

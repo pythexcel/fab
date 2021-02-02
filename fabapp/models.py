@@ -102,3 +102,9 @@ class AvailFurni(models.Model):
 
 
 
+class AvailFurni(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    furniture =  models.CharField(max_length=800, null=True, blank=True)
+    selected = models.BooleanField(default=False)
+
+

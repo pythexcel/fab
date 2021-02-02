@@ -20,17 +20,3 @@ def UserRating():
     else:
         pass
 
-
-def CronReset():
-    rv = User.objects.filter(cron_review=True,is_active=True).update(cron_review=False)
-    if rv:    
-    else:
-        pass        
-
-def DisableExi():
-    dis =  Exhibition.objects.filter(end_date__lt=timezone.now()).update(Running_status=False)
-    if dis:
-    else:
-        pass
-
-
