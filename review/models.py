@@ -14,4 +14,7 @@ class Review(models.Model):
                              blank=True,
                              null=True,
                              on_delete=models.CASCADE)
+    
+    comment = models.CharField(max_length=8000, null=True, blank=True)                
     rating = models.IntegerField(null=True,blank=True)
+    

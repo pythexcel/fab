@@ -23,14 +23,21 @@ class UserReviewDeails(APIView):
         return Response(total)
         
     def post(self,request,pk=None):
+        comment = request.data.get("comment")
         rating = request.data.get("rating")
         user_one = self.request.user
         user_two = User.objects.get(id=pk)
-        reviewed = Review.objects.filter(user_id=user_one.id,rated_user_id=user_two.id).delete()
-        review = Review(user_id=user_one.id,rated_user_id=user_two.id,rating=rating)
-        review.save()
-        return Response({"Message":"Rating submitted"})
-        
+        # bid = Bid.objects.filter()
+
+        reviewed = Review.objects.filter(user_id=user_one.id,rated_user_id=user_two.id)
+        if len(reviewed) == 0:
+            review = Review(user_id=user_one.id,rated_user_id=user_two.id,comment=comment,rating=rating)
+            review.save()
+            serializer = ReviewSeializer(review,many=False)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            return Response("you already have reviewed this User", status=status.HTTP_201_CREATED)
+
 
         
         
