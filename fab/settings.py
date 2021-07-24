@@ -12,22 +12,31 @@ SECRET_KEY = '%=r3#altd4m)_%_y7)y$xu+1bb&7ms!kd2h@vb-j*6jw38kkx6'
 
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True 
+DEBUG = True
 
 
-cloudinary.config(cloud_name=config('cloud_name'),
-                  api_key=config('api_key'),
-                  api_secret=config('api_secret'))
+# cloudinary.config(cloud_name=config('cloud_name'),
+#                   api_key=config('api_key'),
+#                   api_secret=config('api_secret'))
 
 
 ALLOWED_HOSTS = ["*"]
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_CREDENTIALS = True
 
+FCM_DJANGO_SETTINGS = {
+        "FCM_SERVER_KEY": "AIzaSyDJ2EjngU1l9fOd0wPZpytw_1aC8_KRNnM"
+}
+
 # Application definition
 
 INSTALLED_APPS = [
     'rest_framework.authtoken',
+    # 'django.contrib.admin',
+    'material.admin',
+    'material.admin.default',
+    'django.contrib.auth',
+    'django_apscheduler',
     'rest_framework',
     'cloudinary',
     'fabapp.apps.FabappConfig',
@@ -35,10 +44,8 @@ INSTALLED_APPS = [
     'fabrapp.apps.FabrappConfig',
     'review.apps.ReviewConfig',
     'corsheaders',
-    "django_apscheduler",
+    'fcm_django',
     'phonenumber_field',
-    'django.contrib.admin',
-    'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
@@ -100,12 +107,21 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'fab',
-        'USER': 'root',
-        'PASSWORD': 'java@123',  #java@123
+        'USER': 'dbuser',
+        'PASSWORD': 'dbuser@123',
         'HOST': 'localhost',
-        'PORT': '',
+        'PORT': '3306',
     }
 }
+# 'default': {
+#         'ENGINE': 'django.db.backends.mysql', 
+#         'NAME': 'mf_dev_testing',
+#         'USER': 'root',
+#         'PASSWORD': 'java@123',
+#         'HOST':'176.9.137.77',   # Or an IP Address that your DB is hosted on
+#         'PORT': '3306',
+#     }
+# }
 
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators

@@ -1,5 +1,6 @@
 from fabapp.models import (User, Exhibition, ExhibitFab, AvailBrand,
                            AvailFurni, AvailProd)
+from exbrapp.models import Message,UpdateMessage                           
 from rest_framework import serializers
 from drf_extra_fields.fields import Base64ImageField
 from django.contrib.auth.hashers import make_password
@@ -14,32 +15,31 @@ class UserRegisterSerializer(serializers.ModelSerializer):
     class Meta:
 
         model = User
-        fields = ('email', 'password', 'role', 'name', 'status', 'bio',
+        fields = ('email', 'password', 'role', 'company_name', 'status',
                     'phone', 'profile_image', 'is_active', 'is_staff',
-                    'is_superuser','website_link','avg_rating')
+                    'is_superuser','website_link','avg_rating','fcm_token','company_address')
 
     def create(self, validated_data):
         if 'profile_image' in validated_data:
             password = validated_data.pop("password", None)
             pr_image = validated_data.pop("profile_image",None)
-            im = cloudinary.uploader.upload(pr_image)
             email = validated_data.pop("email", None)
-            user = User.objects.create(email=email,profile_image=im['url'],
+            phone = validated_data.pop("phone", None)
+            user = User.objects.create(email=email,profile_image=pr_image,phone=phone,
                                     password=make_password(password),
                                     **validated_data)
         else:
+            phone = validated_data.pop("phone", None)
             email = validated_data.pop("email", None)
             password = validated_data.pop("password", None)
-            user = User.objects.create(email=email,password=make_password(password),**validated_data)
+            user = User.objects.create(email=email,password=make_password(password),phone=phone,**validated_data)
 
         return user
-        # is called if we save serializer if it have an instance
 
     def update(self, instance, validated_data):
         instance.__dict__.update(validated_data)
         if 'profile_image'in validated_data:
-            im = cloudinary.uploader.upload(instance.profile_image)    
-            instance.profile_image = im['url']
+            instance.profile_image = validated_data.get('profile_image',instance.profile_image)
         else:
             pass
         instance.save()
@@ -49,8 +49,8 @@ class UserRegisterSerializer(serializers.ModelSerializer):
 class UserDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('id', 'email', 'role', 'name', 'status', 'bio',
-                            'phone', 'profile_image', 'is_active','website_link','avg_rating')
+        fields = ('id', 'email', 'role', 'company_name', 'status',
+                            'phone', 'profile_image', 'is_active','website_link','avg_rating','fcm_token','company_address')
 
 class ExhibitionSerializer(serializers.ModelSerializer):
     exhibition_image = Base64ImageField(use_url=True, required=False)
@@ -65,11 +65,8 @@ class ExhibitionSerializer(serializers.ModelSerializer):
             print(validated_data['exhibition_image'])
             pr_image = validated_data.pop('exhibition_image')
             print(pr_image)
-            im = cloudinary.uploader.upload(pr_image)
-            print(im)
-
             user = Exhibition.objects.create(**validated_data,
-                                             exhibition_image=im['url'])
+                                             exhibition_image=pr_image)
         else:
             user = Exhibition.objects.create(**validated_data)
 
@@ -79,8 +76,6 @@ class ExhibitionSerializer(serializers.ModelSerializer):
         if 'exhibition_image' in validated_data:
             instance.exhibition_image = validated_data.get(
             'exhibition_image', instance.exhibition_image)    
-            im = cloudinary.uploader.upload(instance.exhibition_image)    
-            instance.exhibition_image = im['url']
             instance.exhibition_name = validated_data.get('exhibition_name',
                                                       instance.exhibition_name)
 
@@ -137,4 +132,24 @@ class AvailBrandSerializer(serializers.ModelSerializer):
 class AvailFurniSerializer(serializers.ModelSerializer):
     class Meta:
         model = AvailFurni
+        fields = '__all__'
+
+
+class MessageSerializer(serializers.ModelSerializer):
+    sender_id = serializers.IntegerField(write_only=True)
+    receiver_id = serializers.IntegerField(write_only=True)
+    # exhibition_request_id = serializers.IntegerField(write_only=True)
+
+    class Meta:
+        model = Message
+        fields = '__all__'
+
+    def create(self, validated_data):
+        print(validated_data)
+        user = Message.objects.create(**validated_data)
+        return user
+
+class UpdateImages(serializers.ModelSerializer):
+    class Meta:
+        model = UpdateMessage
         fields = '__all__'

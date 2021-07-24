@@ -8,5 +8,5 @@ class FabappConfig(AppConfig):
     def ready(self):
         from fabapp import jobs
         jobs.Ratingjob()
-        jobs.Resetjob()
-        jobs.DisableExijob()
+        #jobs.Resetjob()
+        #jobs.DisableExijob()

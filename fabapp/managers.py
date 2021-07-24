@@ -3,10 +3,7 @@ from django.contrib.auth.base_user import BaseUserManager
 
 class UserManager(BaseUserManager):
     use_in_migrations = True
-
-    def create_user(self, email, password=None, **validated_data):
-        if not email:
-            raise ValueError('The given email must be set')
+    def create_user(self, email=None, password=None,**validated_data):     
         email = self.normalize_email(email)
         user = self.model(email=email, **validated_data)
         user.set_password(password)
