@@ -15,7 +15,7 @@ django-phone-field==1.7.1
 django-phonenumber-field==3.0.1
 django-ratings==0.3.7
 django-uuidfield==0.5.0
-djangorestframework==3.9.4
+djangorestframework==3.11.2
 fcm-django==0.2.21
 gunicorn==19.9.0
 idna==2.8
